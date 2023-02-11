@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include mkt_project *.css
+recursive-include mkt_project *.csv
+recursive-include mkt_project *.html
+recursive-include mkt_project *.ico
+recursive-include mkt_project *.js
+recursive-include mkt_project *.json
+recursive-include mkt_project *.md
+recursive-include mkt_project *.png
+recursive-include mkt_project *.py
+recursive-include mkt_project *.svg
+recursive-include mkt_project *.txt
+recursive-exclude mkt_project *.pyc
