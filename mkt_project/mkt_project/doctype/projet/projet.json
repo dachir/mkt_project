@@ -1,0 +1,742 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{MM}{YY}/{activity_type}/{marque_principale}/{agence}/{##}",
+ "creation": "2023-02-11 09:19:53.390172",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "project_id_tab",
+  "section_break_2",
+  "societe",
+  "activity_type",
+  "leader",
+  "company_currency",
+  "buying_selling_price",
+  "is_corporate",
+  "column_break_5",
+  "department",
+  "activite",
+  "nom_complet",
+  "devise_vente",
+  "exchange_rate",
+  "section_break_9",
+  "date",
+  "context",
+  "agence",
+  "contact",
+  "location",
+  "column_break_2",
+  "titre",
+  "objective",
+  "marque_principale",
+  "marques",
+  "produits",
+  "section_break_02",
+  "start_date",
+  "duration",
+  "column_break_3",
+  "end_date",
+  "section_break_09",
+  "commune",
+  "start_time",
+  "column_break_12",
+  "lieu",
+  "end_time",
+  "target_section",
+  "selling",
+  "column_break_39",
+  "tasting",
+  "column_break_10",
+  "sampling",
+  "column_break_43",
+  "survey",
+  "column_break_13",
+  "visibility",
+  "section_break_25",
+  "details",
+  "section_break_19",
+  "sales_section",
+  "sellings",
+  "section_break_mat_log",
+  "sales_materials_details",
+  "column_break_112",
+  "logistics",
+  "objectif_sales_section",
+  "audience_sales",
+  "column_break_sales_2",
+  "volume_sales",
+  "column_break_sales_1",
+  "revenue_sales",
+  "column_break_sales_3",
+  "rh_section",
+  "rh_sales",
+  "tasting_tab",
+  "section_break_74",
+  "tastings",
+  "section_break_tasting",
+  "tasting_material_details",
+  "objectifs_tasting_section",
+  "audience_tasting",
+  "column_break_tasting_1",
+  "volume_tasting",
+  "column_break_tasting_3",
+  "column_break_tasting_2",
+  "rh_section_break_tasting",
+  "rh_tasting",
+  "sampling_tab",
+  "sampling_section",
+  "samplings",
+  "column_break_sampling",
+  "sampling_material_details",
+  "objectifs_sampling_section",
+  "audience_sampling",
+  "column_break_sampling_1",
+  "volume_sampling",
+  "column_break_sampling_3",
+  "column_break_sampling_2",
+  "rh_section_break_sampling",
+  "rh_sampling",
+  "surveys_tab",
+  "rh_sction_break_survey",
+  "type_enquete",
+  "column_break_89",
+  "nb_survey",
+  "column_break_91",
+  "column_break_92",
+  "section_break_survey_objectif",
+  "rh_survey",
+  "survey_section",
+  "survey_material_details",
+  "column_break_survey",
+  "media_tab",
+  "visibilities",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "leader",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Responsable",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Ville",
+   "options": "Branch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "objective",
+   "fieldtype": "Text Editor",
+   "label": "Objectifs Marketing",
+   "max_height": "10rem",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "selling",
+   "fieldtype": "Check",
+   "label": "Selling"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "tasting",
+   "fieldtype": "Check",
+   "label": "Tasting"
+  },
+  {
+   "default": "0",
+   "fieldname": "visibility",
+   "fieldtype": "Check",
+   "label": "M\u00e9dia"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "sampling",
+   "fieldtype": "Check",
+   "label": "Sampling"
+  },
+  {
+   "default": "0",
+   "fieldname": "survey",
+   "fieldtype": "Check",
+   "label": "Survey"
+  },
+  {
+   "depends_on": "eval:doc.selling!=0",
+   "fieldname": "section_break_19",
+   "fieldtype": "Tab Break",
+   "hide_border": 1,
+   "label": "Selling"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Projet",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Int",
+   "label": "Dur\u00e9e"
+  },
+  {
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break",
+   "label": "Budget"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "context",
+   "fieldtype": "Text Editor",
+   "label": "Contexte",
+   "max_height": "10rem",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sellings",
+   "fieldtype": "Table",
+   "label": "Ventes",
+   "options": "Sales Details"
+  },
+  {
+   "fieldname": "tastings",
+   "fieldtype": "Table",
+   "label": "Tastings",
+   "options": "Tasting Details"
+  },
+  {
+   "fieldname": "visibilities",
+   "fieldtype": "Table",
+   "options": "Visibility Details"
+  },
+  {
+   "fieldname": "samplings",
+   "fieldtype": "Table",
+   "label": "Sampling",
+   "options": "Sampling Details"
+  },
+  {
+   "fieldname": "logistics",
+   "fieldtype": "Table",
+   "label": "Logistique",
+   "options": "Logistic Details"
+  },
+  {
+   "fieldname": "target_section",
+   "fieldtype": "Section Break",
+   "label": "M\u00e9canique"
+  },
+  {
+   "fieldname": "details",
+   "fieldtype": "Table",
+   "label": "Details",
+   "options": "Budget Details"
+  },
+  {
+   "fieldname": "activity_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Type d'Activit\u00e9",
+   "options": "Evenement",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "agence",
+   "fieldtype": "Link",
+   "label": "Agence / Organisateur",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Marketing",
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "D\u00e9partement",
+   "options": "Department",
+   "reqd": 1
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "titre",
+   "fieldtype": "Data",
+   "label": "Titre",
+   "reqd": 1
+  },
+  {
+   "fieldname": "marques",
+   "fieldtype": "Table MultiSelect",
+   "label": "Marques Secondaires",
+   "options": "Marque Details"
+  },
+  {
+   "fieldname": "contact",
+   "fieldtype": "Data",
+   "label": "Contact"
+  },
+  {
+   "fieldname": "commune",
+   "fieldtype": "Select",
+   "label": "Commune",
+   "options": "\nAll\nBandalungwa\nBarumbu\nBumbu\nGombe\nKalamu\nKasa-Vubu\nKimbanseke\nKinshasa\nKintambo\nKisenso\nLemba\nLimete\nLingwala\nMakala\nMaluku\nMasina\nMatete\nMont Ngafula\nNdjili\u00a0(N'Djili)\nNgaba\nNgaliema\nNgiri-Ngiri\nNsele\u00a0(N'Sele)\nSelembao"
+  },
+  {
+   "fieldname": "lieu",
+   "fieldtype": "Data",
+   "label": "Lieu"
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Time",
+   "label": "Start Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Time",
+   "label": "End Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "project_id_tab",
+   "fieldtype": "Tab Break",
+   "label": "Project ID"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "leader.full_name",
+   "fieldname": "nom_complet",
+   "fieldtype": "Data",
+   "label": "Nom Complet"
+  },
+  {
+   "fieldname": "section_break_02",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_09",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "buying_selling_price",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Liste Prix",
+   "options": "Price List",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.tasting!=0",
+   "fieldname": "tasting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Tasting"
+  },
+  {
+   "fieldname": "devise_vente",
+   "fieldtype": "Link",
+   "label": "Devise Vente",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rh_section",
+   "fieldtype": "Section Break",
+   "label": "RH"
+  },
+  {
+   "fieldname": "sales_section",
+   "fieldtype": "Section Break",
+   "label": "Activit\u00e9"
+  },
+  {
+   "fieldname": "section_break_74",
+   "fieldtype": "Section Break",
+   "label": "Activit\u00e9"
+  },
+  {
+   "depends_on": "eval:doc.sampling!=0",
+   "fieldname": "sampling_tab",
+   "fieldtype": "Tab Break",
+   "label": "Sampling"
+  },
+  {
+   "fieldname": "rh_section_break_sampling",
+   "fieldtype": "Section Break",
+   "label": "RH"
+  },
+  {
+   "fieldname": "sampling_section",
+   "fieldtype": "Section Break",
+   "label": "Activit\u00e9"
+  },
+  {
+   "depends_on": "eval:doc.survey!=0",
+   "fieldname": "surveys_tab",
+   "fieldtype": "Tab Break",
+   "label": "Surveys"
+  },
+  {
+   "fieldname": "rh_sction_break_survey",
+   "fieldtype": "Section Break",
+   "label": "RH & Survey"
+  },
+  {
+   "fieldname": "survey_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.visibility!=0",
+   "fieldname": "media_tab",
+   "fieldtype": "Tab Break",
+   "label": "Media"
+  },
+  {
+   "fieldname": "column_break_112",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sales_materials_details",
+   "fieldtype": "Table",
+   "label": "Materiel",
+   "options": "Sale Materials Details"
+  },
+  {
+   "fieldname": "section_break_tasting",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tasting_material_details",
+   "fieldtype": "Table",
+   "label": "Material",
+   "options": "Tasting Material Details"
+  },
+  {
+   "fieldname": "column_break_sampling",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sampling_material_details",
+   "fieldtype": "Table",
+   "label": "Material",
+   "options": "Sampling Material Details"
+  },
+  {
+   "fieldname": "column_break_survey",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "survey_material_details",
+   "fieldtype": "Table",
+   "label": "Materiel",
+   "options": "Survey Material Details"
+  },
+  {
+   "fieldname": "marque_principale",
+   "fieldtype": "Link",
+   "label": "Marque Principale",
+   "options": "Brand",
+   "reqd": 1
+  },
+  {
+   "fieldname": "societe",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Societe",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "activite",
+   "fieldtype": "Select",
+   "label": "Activite",
+   "options": "\nDOOR TO DOOR\nECOLES\nPLACE PUBLIQUE\nMATERNITES\nSURVEY QUANTI\nSURVEY QUALI\nEVENEMENTS PAYANTS\nEVENEMENTS GRATUITS\nAUTRE",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_corporate",
+   "fieldtype": "Check",
+   "label": "Corporate"
+  },
+  {
+   "fieldname": "rh_sales",
+   "fieldtype": "Table",
+   "options": "RH Sales"
+  },
+  {
+   "fieldname": "rh_sampling",
+   "fieldtype": "Table",
+   "options": "RH Sampling"
+  },
+  {
+   "fieldname": "rh_survey",
+   "fieldtype": "Table",
+   "options": "RH Survey"
+  },
+  {
+   "fieldname": "rh_section_break_tasting",
+   "fieldtype": "Section Break",
+   "label": "RH"
+  },
+  {
+   "fieldname": "type_enquete",
+   "fieldtype": "Select",
+   "label": "Type Enquete",
+   "options": "Quanti-Quali\nQuantitative\nQualitative"
+  },
+  {
+   "fieldname": "objectif_sales_section",
+   "fieldtype": "Section Break",
+   "label": "Objectif"
+  },
+  {
+   "fieldname": "volume_sales",
+   "fieldtype": "Data",
+   "label": "Volume"
+  },
+  {
+   "fieldname": "column_break_sales_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "revenue_sales",
+   "fieldtype": "Currency",
+   "label": "Revenue",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "column_break_sales_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audience_sales",
+   "fieldtype": "Data",
+   "label": "Audience"
+  },
+  {
+   "fieldname": "column_break_sales_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "objectifs_tasting_section",
+   "fieldtype": "Section Break",
+   "label": "Objectifs"
+  },
+  {
+   "fieldname": "volume_tasting",
+   "fieldtype": "Data",
+   "label": "Volume"
+  },
+  {
+   "fieldname": "column_break_tasting_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_tasting_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audience_tasting",
+   "fieldtype": "Data",
+   "label": "Audience"
+  },
+  {
+   "fieldname": "column_break_tasting_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "objectifs_sampling_section",
+   "fieldtype": "Section Break",
+   "label": "Objectifs"
+  },
+  {
+   "fieldname": "volume_sampling",
+   "fieldtype": "Data",
+   "label": "Volume"
+  },
+  {
+   "fieldname": "column_break_sampling_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_sampling_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audience_sampling",
+   "fieldtype": "Data",
+   "label": "Audience"
+  },
+  {
+   "fieldname": "column_break_sampling_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_89",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "nb_survey",
+   "fieldtype": "Data",
+   "label": "Survey"
+  },
+  {
+   "fieldname": "column_break_91",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_92",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_survey_objectif",
+   "fieldtype": "Section Break",
+   "hide_border": 1
+  },
+  {
+   "fieldname": "rh_tasting",
+   "fieldtype": "Table",
+   "options": "RH Tasting"
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Devise Projet",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Data",
+   "label": "Exchange Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_mat_log",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_39",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_43",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "produits",
+   "fieldtype": "Table MultiSelect",
+   "label": "Produits",
+   "options": "Item Details"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "group": "Gestion Stock",
+   "link_doctype": "Material Request",
+   "link_fieldname": "projet"
+  },
+  {
+   "group": "Gestion Stock",
+   "link_doctype": "Stock Entry",
+   "link_fieldname": "projet"
+  },
+  {
+   "group": "Action Terrain",
+   "link_doctype": "Action",
+   "link_fieldname": "projet"
+  }
+ ],
+ "modified": "2023-05-31 14:39:22.668466",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "Projet",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Brand Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

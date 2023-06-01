@@ -1,0 +1,92 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:nom",
+ "creation": "2023-03-13 15:47:11.037830",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "nom",
+  "description",
+  "devise",
+  "bonus",
+  "column_break_5",
+  "salaire_jour",
+  "transport_jour",
+  "extra"
+ ],
+ "fields": [
+  {
+   "fieldname": "nom",
+   "fieldtype": "Data",
+   "label": "Nom",
+   "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description"
+  },
+  {
+   "fieldname": "salaire_jour",
+   "fieldtype": "Currency",
+   "label": "Salaire Jour",
+   "options": "devise"
+  },
+  {
+   "fieldname": "transport_jour",
+   "fieldtype": "Currency",
+   "label": "Transport Jour",
+   "options": "devise"
+  },
+  {
+   "fieldname": "devise",
+   "fieldtype": "Link",
+   "label": "Devise",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "extra",
+   "fieldtype": "Currency",
+   "label": "Extra",
+   "options": "devise"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "bonus",
+   "fieldtype": "Check",
+   "label": "Bonus"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-03-24 08:50:20.109771",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "Promoteur Salaire",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

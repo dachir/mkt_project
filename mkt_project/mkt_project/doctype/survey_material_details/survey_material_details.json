@@ -1,0 +1,58 @@
+{
+ "actions": [
+  {
+   "action": "/package/item",
+   "action_type": "Route",
+   "label": "Test"
+  }
+ ],
+ "allow_rename": 1,
+ "creation": "2023-03-11 11:48:40.480000",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "description",
+  "qty",
+  "cout"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Produit",
+   "options": "Item"
+  },
+  {
+   "fetch_from": "item.item_name",
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Int",
+   "label": "Qt\u00e9"
+  },
+  {
+   "fieldname": "cout",
+   "fieldtype": "Currency",
+   "label": "Cout"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-03-11 11:48:40.480000",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "Survey Material Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

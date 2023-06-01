@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-02-11 13:49:14.663410",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "document_type",
+  "item",
+  "qte",
+  "pu",
+  "total",
+  "observation"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Dynamic Link",
+   "label": "Item",
+   "options": "document_type"
+  },
+  {
+   "fieldname": "qte",
+   "fieldtype": "Int",
+   "label": "Qte"
+  },
+  {
+   "fieldname": "pu",
+   "fieldtype": "Float",
+   "label": "PU"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Float",
+   "label": "Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "observation",
+   "fieldtype": "Data",
+   "label": "Observation"
+  },
+  {
+   "default": "Item",
+   "fieldname": "document_type",
+   "fieldtype": "Link",
+   "label": "Document type",
+   "options": "DocType"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-03-31 17:41:33.532110",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "Budget Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

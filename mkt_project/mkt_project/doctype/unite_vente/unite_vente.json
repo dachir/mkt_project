@@ -1,0 +1,142 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "autoname": "field:new_item_code",
+ "creation": "2023-03-08 11:59:11.100556",
+ "default_view": "List",
+ "description": "Aggregate group of **Items** into another **Item**. This is useful if you are bundling a certain **Items** into a package and you maintain stock of the packed **Items** and not the aggregate **Item**. \n\nThe package **Item** will have \"Is Stock Item\" as \"No\" and \"Is Sales Item\" as \"Yes\".\n\nFor Example: If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.\n\nNote: BOM = Bill of Materials",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "basic_section",
+  "new_item_code",
+  "description",
+  "section_break_4",
+  "prix_vente",
+  "cout",
+  "column_break_6",
+  "devise",
+  "devise_cout",
+  "item_section",
+  "items"
+ ],
+ "fields": [
+  {
+   "fieldname": "basic_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "new_item_code",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Unit\u00e9 de vente",
+   "no_copy": 1,
+   "oldfieldname": "new_item_code",
+   "oldfieldtype": "Data",
+   "options": "Item",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description"
+  },
+  {
+   "description": "List items that form the package.",
+   "fieldname": "item_section",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "oldfieldname": "sales_bom_items",
+   "oldfieldtype": "Table",
+   "options": "Paquet Details",
+   "reqd": 1
+  },
+  {
+   "fieldname": "prix_vente",
+   "fieldtype": "Currency",
+   "label": "Prix Vente",
+   "options": "devise"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "CDF",
+   "fieldname": "devise",
+   "fieldtype": "Link",
+   "label": "Devise",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "cout",
+   "fieldtype": "Currency",
+   "label": "Cout",
+   "options": "devise_cout",
+   "read_only": 1
+  },
+  {
+   "default": "USD",
+   "fieldname": "devise_cout",
+   "fieldtype": "Link",
+   "label": "Devise Cout",
+   "options": "Currency"
+  }
+ ],
+ "icon": "fa fa-sitemap",
+ "links": [],
+ "modified": "2023-04-01 09:21:09.283929",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "Unite Vente",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock User"
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "ASC",
+ "states": [],
+ "title_field": "description"
+}

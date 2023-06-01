@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-03-13 17:03:14.782610",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "event_salary",
+  "frais_participant",
+  "transport_extra",
+  "devise"
+ ],
+ "fields": [
+  {
+   "fieldname": "event_salary",
+   "fieldtype": "Currency",
+   "label": "Event Salary",
+   "options": "devise"
+  },
+  {
+   "fieldname": "frais_participant",
+   "fieldtype": "Currency",
+   "label": "Frais Participant",
+   "options": "devise"
+  },
+  {
+   "fieldname": "transport_extra",
+   "fieldtype": "Currency",
+   "label": "Transport Extra",
+   "options": "devise"
+  },
+  {
+   "fieldname": "devise",
+   "fieldtype": "Link",
+   "label": "Devise",
+   "options": "Currency"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-03-13 17:03:39.830213",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "Marketing Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

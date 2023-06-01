@@ -1,0 +1,142 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-02-22 11:47:22.429703",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "projet",
+  "mecanic",
+  "column_break_5",
+  "date",
+  "agence",
+  "section_break_6",
+  "produit",
+  "total_product",
+  "column_break_8",
+  "gift",
+  "total_gift",
+  "column_break_10",
+  "qty",
+  "details_section",
+  "action_detail",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "projet",
+   "fieldtype": "Link",
+   "label": "Projet",
+   "options": "Projet"
+  },
+  {
+   "fieldname": "mecanic",
+   "fieldtype": "Select",
+   "label": "Mecanic",
+   "options": "Selling\nTasting\nSampling\nSurvey\nPromoters\nVisibility\nATL\nLogistic"
+  },
+  {
+   "fieldname": "produit",
+   "fieldtype": "Link",
+   "label": "Produit",
+   "options": "Item"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "agence",
+   "fieldtype": "Link",
+   "label": "Agence",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "gift",
+   "fieldtype": "Link",
+   "label": "Gift",
+   "options": "Item"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Action",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "action_detail",
+   "fieldtype": "Table",
+   "label": "Action Detail",
+   "options": "Action Detail"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "hide_border": 1,
+   "label": "Details"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break",
+   "hide_border": 1
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_product",
+   "fieldtype": "Int",
+   "label": "Total Produit"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Int",
+   "label": "Qty"
+  },
+  {
+   "fieldname": "total_gift",
+   "fieldtype": "Int",
+   "label": "Total gift"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-02-22 15:14:53.620739",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "Action",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
