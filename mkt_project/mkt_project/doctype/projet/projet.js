@@ -29,14 +29,14 @@ frappe.ui.form.on('Projet', {
 		frm.set_query("item","sellings", function() {
 			return {
 				"filters": {
-					"item_group": ["IN", ["Products", "Package"]],
+					"item_group": ["IN", ["FG", "Package"]],
 				}
 			};
 		});
 		frm.set_query("item","sales_materials_details", function() {
 			return {
 				"filters": {
-					"item_group": "Marketing Materials",
+					"item_group": "MRKT",
 				}
 			};
 		});
