@@ -95,7 +95,7 @@ frappe.ui.form.on('Projet', {
 				frm.set_value("nb_survey", volume);
 
 				//Calcul des couts
-				frm.doc.sellings.forEach(e => {
+				/*frm.doc.sellings.forEach(e => {
 					frappe.call({
 						method: "erpnext.stock.get_item_details.get_valuation_rate",
 						args: {
@@ -137,7 +137,7 @@ frappe.ui.form.on('Projet', {
 							frm.refresh_field("logistics");
 						}
 					});
-				});
+				});*/
 
 				
 				frm.refresh();
@@ -153,21 +153,21 @@ frappe.ui.form.on('Projet', {
 					var row = frm.add_child('details');
 					row.item = e.item;
 					row.qte = frm.doc.volume_sales;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout / frm.doc.exchange_rate;
 					row.total = row.qte * row.pu;
 				});
 				frm.doc.sales_materials_details.forEach(e => {
 					var row = frm.add_child('details');
 					row.item = e.item;
 					row.qte = e.qty * frm.doc.duration;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout / frm.doc.exchange_rate;
 					row.total = row.qte * row.pu;
 				});
 				frm.doc.logistics.forEach(e => {
 					var row = frm.add_child('details');
 					row.item = e.item;
 					row.qte = e.qty * frm.doc.duration;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout / frm.doc.exchange_rate;
 					row.total = row.qte * row.pu;
 				});
 				frm.doc.rh_sales.forEach(e => {
@@ -183,14 +183,14 @@ frappe.ui.form.on('Projet', {
 					var row = frm.add_child('details');
 					row.item = e.item;
 					row.qte = frm.doc.volume_sampling;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout / frm.doc.exchange_rate;
 					row.total = row.qte * row.pu;
 				});
 				frm.doc.sampling_material_details.forEach(e => {
 					var row = frm.add_child('details');
 					row.item = e.item;
 					row.qte = e.qty;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout / frm.doc.exchange_rate;
 					row.total = row.qte * row.pu;
 				});
 				frm.doc.rh_sampling.forEach(e => {
@@ -206,14 +206,14 @@ frappe.ui.form.on('Projet', {
 					var row = frm.add_child('details');
 					row.item = e.item;
 					row.qte = frm.doc.volume_tasting;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout / frm.doc.exchange_rate;
 					row.total = row.qte * row.pu;
 				});
 				frm.doc.tasting_material_details.forEach(e => {
 					var row = frm.add_child('details');
 					row.item = e.item;
 					row.qte = e.qty;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout / frm.doc.exchange_rate;
 					row.total = row.qte * row.pu;
 				});
 				frm.doc.rh_tasting.forEach(e => {
@@ -297,6 +297,47 @@ frappe.ui.form.on('Projet', {
 			}
 		}
 	},
+	/*get_cost: function(frm, item) {
+		return new Promise((resolve, reject) => {
+			frm.call({
+				method: "get_item_cost",
+				args: {
+					"item": item,
+				},
+				callback: (r) => {
+					//frm.refresh();
+					if (r.message === true) resolve(r.message);
+					else resolve(0);
+				},
+				error: (err) => {
+					// Handle any errors here
+					reject(err);
+				},
+			});
+		});
+	},*/
+
+	get_cost: function(frm, item) {
+		return new Promise((resolve, reject) => {
+			frappe.call({
+				method: "erpnext.stock.get_item_details.get_valuation_rate",
+				args: {
+					item_code: item,
+					company: frm.doc.societe,
+					warehouse: frm.doc.warehouse,
+				},
+				callback: function (r) {
+					resolve(r.message.valuation_rate);
+					//frm.refresh_field("sales_materials_details");
+				},
+				error: (err) => {
+					// Handle any errors here
+					reject(err);
+				},
+			});
+		});
+	},
+	
 	company_currency: function (frm) {
 		frm.events.get_exchange_rate(frm);
 	},
@@ -519,3 +560,55 @@ const clear_sampling = (frm) =>{
 	frm.doc.samplings = [];
 	frm.doc.sampling_material_details = [];
 }
+
+
+frappe.ui.form.on('Sales Details', {
+    item(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		frm.refresh_field("sellings");
+    },
+});
+frappe.ui.form.on('Sale Materials Details', {
+    item(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		frm.refresh_field("sales_materials_details");
+    },
+});
+frappe.ui.form.on('Logistic Details', {
+    item(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		frm.refresh_field("logistics");
+    },
+});
+frappe.ui.form.on('Tasting Details', {
+    item(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		frm.refresh_field("tastings");
+    },
+});
+frappe.ui.form.on('Tasting Material Details', {
+    item(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		frm.refresh_field("tasting_material_details");
+    },
+});
+
+frappe.ui.form.on('Sampling Details', {
+    item(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		frm.refresh_field("samplings");
+    },
+});
+frappe.ui.form.on('Sampling Material Details', {
+    item(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		frm.refresh_field("sampling_material_details");
+    },
+});

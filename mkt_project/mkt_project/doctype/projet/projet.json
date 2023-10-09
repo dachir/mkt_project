@@ -11,10 +11,10 @@
   "project_id_tab",
   "section_break_2",
   "societe",
-  "column_break_d4bhj",
   "branch",
-  "column_break_i4uik",
+  "column_break_d4bhj",
   "department",
+  "warehouse",
   "section_break_zzeeb",
   "activity_type",
   "leader",
@@ -693,10 +693,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_i4uik",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
@@ -705,6 +701,12 @@
   {
    "fieldname": "section_break_zzeeb",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Depot",
+   "options": "Warehouse"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -726,7 +728,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2023-07-29 10:21:22.479607",
+ "modified": "2023-10-09 13:00:20.995223",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
