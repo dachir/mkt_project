@@ -36,7 +36,7 @@ frappe.ui.form.on('Projet', {
 		frm.set_query("item","sales_materials_details", function() {
 			return {
 				"filters": {
-					"item_group": "MRKT",
+					"item_group": ["LIKE", "MRKT"],
 				}
 			};
 		});
@@ -61,12 +61,16 @@ frappe.ui.form.on('Projet', {
 				frm.doc.sellings.forEach(e => {
 					revenue += e.prix_vente * frm.doc.exchange_rate * volume;
 				});
+				frm.set_value("frais_sponsoring", revenue * frm.doc.coefficient);
 				//frm.doc.audience_sales = volume;
 				//frm.doc.volume_sales = volume;
 				//frm.doc.revenue_sales = revenue;
 				frm.set_value("audience_sales", volume);
 				frm.set_value("volume_sales", volume);
 				frm.set_value("revenue_sales", revenue);
+
+				//affectations deu volume a chaque ligne sales
+				frm.doc.sellings.forEach(e => {e.qty = volume});
 
 				volume = 0;
 				frm.doc.rh_tasting.forEach(e => {
@@ -76,6 +80,9 @@ frappe.ui.form.on('Projet', {
 
 				frm.set_value("audience_tasting", volume);
 				frm.set_value("volume_tasting", volume);
+
+				//affectations deu volume a chaque ligne tasting
+				frm.doc.tastings.forEach(e => {e.qty = volume});
 
 				volume = 0;
 				frm.doc.rh_sampling.forEach(e => {
@@ -92,54 +99,11 @@ frappe.ui.form.on('Projet', {
 				});
 				volume *= frm.doc.duration;
 
+				//affectations deu volume a chaque ligne tasting
+				frm.doc.samplings.forEach(e => {e.qty = volume});
+
 				frm.set_value("nb_survey", volume);
 
-				//Calcul des couts
-				/*frm.doc.sellings.forEach(e => {
-					frappe.call({
-						method: "erpnext.stock.get_item_details.get_valuation_rate",
-						args: {
-							item_code: e.item,
-							company: frm.doc.societe,
-							warehouse: "Marketing Store - MCO",
-						},
-						callback: function (r) {
-							e.cout = r.message.valuation_rate;
-							frm.refresh_field("sales_materials_details");
-						}
-					});
-				});
-				frm.doc.sales_materials_details.forEach(e => {
-					frappe.call({
-						method: "erpnext.stock.get_item_details.get_valuation_rate",
-						args: {
-							item_code: e.item,
-							company: frm.doc.societe,
-							warehouse: "Marketing Store - MCO",
-						},
-						callback: function (r) {
-							e.cout = r.message.valuation_rate;
-							frm.refresh_field("sales_materials_details");
-						}
-					});
-				});
-
-				frm.doc.logistics.forEach(e => {
-					frappe.call({
-						method: "erpnext.stock.get_item_details.get_valuation_rate",
-						args: {
-							item_code: e.item,
-							company: frm.doc.societe,
-							warehouse: "Marketing Store - MCO",
-						},
-						callback: function (r) {
-							e.cout = r.message.valuation_rate;
-							frm.refresh_field("logistics");
-						}
-					});
-				});*/
-
-				
 				frm.refresh();
 				frappe.msgprint("Calcul terminé!");
 			}, "Utilitaires"
@@ -151,102 +115,164 @@ frappe.ui.form.on('Projet', {
 				frm.refresh_field('details');
 				frm.doc.sellings.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
+					//row.item = e.item;
+					row.description = "REVENUE";
 					row.qte = frm.doc.volume_sales;
-					row.pu = e.cout / frm.doc.exchange_rate;
+					row.pu = e.prix_vente * frm.doc.exchange_rate;
 					row.total = row.qte * row.pu;
+					row.type = 'REVENUE';
+					row.order = 'A';
+					row.style = 'color: red; font-weight: bold; font-style: italic;';
+				});
+				if(frm.doc.frais_sponsoring > 0) {
+					frm.doc.sellings.forEach(e => {
+						var row = frm.add_child('details');
+						//row.item = e.item;
+						row.description = "Frais sponsoring";
+						row.qte = frm.doc.volume_sales;
+						row.pu = e.prix_vente * frm.doc.exchange_rate * frm.doc.coefficient;
+						row.total = row.qte * row.pu;
+						row.type = 'Sponsoring';
+						row.order = 'A1';
+					});
+				}
+				frm.doc.sellings.forEach(e => {
+					var row = frm.add_child('details');
+					//row.item = e.item;
+					row.description = e.description;
+					row.qte = frm.doc.volume_sales;
+					row.pu = e.prix_achat;
+					row.total = row.qte * row.pu;
+					row.type = 'Achat';
+					row.order = 'A2';
 				});
 				frm.doc.sales_materials_details.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
-					row.qte = e.qty * frm.doc.duration;
-					row.pu = e.cout / frm.doc.exchange_rate;
+					//row.item = e.item;
+					row.description = e.description;
+					row.qte = e.qty;
+					row.pu = e.cout;
 					row.total = row.qte * row.pu;
+					row.type = 'Materiel Support';
+					row.order = 'A3';
 				});
 				frm.doc.logistics.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
+					//row.item = e.item;
+					row.description = e.description;
 					row.qte = e.qty * frm.doc.duration;
-					row.pu = e.cout / frm.doc.exchange_rate;
+					row.pu = e.cout;
 					row.total = row.qte * row.pu;
+					row.type = 'Logistique';
+					row.order = 'A4';
 				});
 				frm.doc.rh_sales.forEach(e => {
 					var row = frm.add_child('details');
 					row.document_type = "Promoteur Salaire";
-					row.item = e.type;
+					//row.item = e.type;
+					row.description = e.type;
 					row.qte = e.nombre * frm.doc.duration;
 					row.pu = (e.transport_jour + e.salaire_jour) ;
 					row.total = row.qte * row.pu;
+					row.type = 'Staff';
+					row.order = 'A5';
 				});
 
 				frm.doc.samplings.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
+					//row.item = e.item;
+					row.description = e.description;
 					row.qte = frm.doc.volume_sampling;
-					row.pu = e.cout / frm.doc.exchange_rate;
+					row.pu = e.cout ;
 					row.total = row.qte * row.pu;
+					row.type = 'Achat';
+					row.order = 'B';
 				});
 				frm.doc.sampling_material_details.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
+					//row.item = e.item;
+					row.description = e.description;
 					row.qte = e.qty;
-					row.pu = e.cout / frm.doc.exchange_rate;
+					row.pu = e.cout ;
 					row.total = row.qte * row.pu;
+					row.type = 'Materiel Support';
+					row.order = 'B1';
 				});
 				frm.doc.rh_sampling.forEach(e => {
 					var row = frm.add_child('details');
 					row.document_type = "Promoteur Salaire";
-					row.item = e.type;
+					//row.item = e.type;
+					row.description = e.type;
 					row.qte = e.nombre * frm.doc.duration;
 					row.pu = (e.transport_jour + e.salaire_jour);
 					row.total = row.qte * row.pu;
+					row.type = 'Staff';
+					row.order = 'B2';
 				});
 
 				frm.doc.tastings.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
+					//row.item = e.item;
+					row.description = e.description;
 					row.qte = frm.doc.volume_tasting;
-					row.pu = e.cout / frm.doc.exchange_rate;
+					row.pu = e.cout ;
 					row.total = row.qte * row.pu;
+					row.type = 'Achat';
+					row.order = 'C';
 				});
 				frm.doc.tasting_material_details.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
+					//row.item = e.item;
+					row.description = e.description;
 					row.qte = e.qty;
-					row.pu = e.cout / frm.doc.exchange_rate;
+					row.pu = e.cout ;
 					row.total = row.qte * row.pu;
+					row.type = 'Materiel Support';
+					row.order = 'C1';
 				});
 				frm.doc.rh_tasting.forEach(e => {
 					var row = frm.add_child('details');
 					row.document_type = "Promoteur Salaire";
-					row.item = e.type;
+					//row.item = e.type;
+					row.description = e.type;
 					row.qte = e.nombre * frm.doc.duration;
 					row.pu = (e.transport_jour + e.salaire_jour) ;
 					row.total = row.qte * row.pu;
+					row.type = 'Staff';
+					row.order = 'C2';
 				});
 
 				frm.doc.rh_survey.forEach(e => {
 					var row = frm.add_child('details');
 					row.document_type = "Promoteur Salaire";
-					row.item = e.type;
+					//row.item = e.type;
+					row.description = e.type;
 					row.qte = e.nombre * frm.doc.duration;
 					row.pu = (e.transport_jour + e.salaire_jour) ;
 					row.total = row.qte * row.pu;
+					row.type = 'Staff';
+					row.order = 'D';
 				});
 				frm.doc.survey_material_details.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
+					//row.item = e.item;
+					row.description = e.description;
 					row.qte = e.qty;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout;
 					row.total = row.qte * row.pu;
+					row.type = 'Materiel Support';
+					row.order = 'D1';
 				});
 
 				frm.doc.visibilities.forEach(e => {
 					var row = frm.add_child('details');
-					row.item = e.item;
+					//row.item = e.item;
+					row.description = e.description;
 					row.qte = e.qty * frm.doc.duration;
-					row.pu = e.cout * frm.doc.exchange_rate;
+					row.pu = e.cout;
 					row.total = row.qte * row.pu;
+					row.type = 'Media';
+					row.order = 'E';
 				});
 				frm.refresh_field('details');
 			}, "Utilitaires"
@@ -297,16 +323,17 @@ frappe.ui.form.on('Projet', {
 			}
 		}
 	},
-	/*get_cost: function(frm, item) {
+	get_sage_item_cost: function(frm, item) {
 		return new Promise((resolve, reject) => {
 			frm.call({
-				method: "get_item_cost",
+				method: "get_sage_item_cost",
 				args: {
+					"site": frm.doc.branch,
 					"item": item,
 				},
 				callback: (r) => {
 					//frm.refresh();
-					if (r.message === true) resolve(r.message);
+					if (r.message) resolve(r.message);
 					else resolve(0);
 				},
 				error: (err) => {
@@ -315,7 +342,27 @@ frappe.ui.form.on('Projet', {
 				},
 			});
 		});
-	},*/
+	},
+
+	get_sage_cm29_price: function(frm, item) {
+		return new Promise((resolve, reject) => {
+			frm.call({
+				method: "get_sage_cm29_price",
+				args: {
+					"item": item,
+				},
+				callback: (r) => {
+					//frm.refresh();
+					if (r.message) resolve(r.message);
+					else resolve(0);
+				},
+				error: (err) => {
+					// Handle any errors here
+					reject(err);
+				},
+			});
+		});
+	},
 
 	get_cost: function(frm, item) {
 		return new Promise((resolve, reject) => {
@@ -565,14 +612,15 @@ const clear_sampling = (frm) =>{
 frappe.ui.form.on('Sales Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		cur_frm.events.get_sage_cm29_price(frm,row.item).then((result)=> row.prix_achat = result)
+		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
 		frm.refresh_field("sellings");
     },
 });
 frappe.ui.form.on('Sale Materials Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
 		frm.refresh_field("sales_materials_details");
     },
 });
@@ -586,14 +634,14 @@ frappe.ui.form.on('Logistic Details', {
 frappe.ui.form.on('Tasting Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
 		frm.refresh_field("tastings");
     },
 });
 frappe.ui.form.on('Tasting Material Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
 		frm.refresh_field("tasting_material_details");
     },
 });
@@ -601,14 +649,14 @@ frappe.ui.form.on('Tasting Material Details', {
 frappe.ui.form.on('Sampling Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
 		frm.refresh_field("samplings");
     },
 });
 frappe.ui.form.on('Sampling Material Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
 		frm.refresh_field("sampling_material_details");
     },
 });

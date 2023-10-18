@@ -17,6 +17,7 @@
   "description",
   "qty",
   "cout",
+  "prix_achat",
   "prix_vente",
   "variant"
  ],
@@ -30,17 +31,18 @@
   {
    "fieldname": "qty",
    "fieldtype": "Int",
-   "label": "Nombre"
+   "label": "Objectif/ mois"
   },
   {
    "fieldname": "prix_vente",
    "fieldtype": "Currency",
    "label": "Prix Vente",
+   "options": "devise_vente",
    "search_index": 1
   },
   {
    "fieldname": "cout",
-   "fieldtype": "Currency",
+   "fieldtype": "Float",
    "label": "Cout"
   },
   {
@@ -55,12 +57,18 @@
    "fieldtype": "Select",
    "label": "Variant",
    "options": "\nV0\nV1\nV2\nV3\nV4\nV5\nV6\nV7\nV8\nV9"
+  },
+  {
+   "fieldname": "prix_achat",
+   "fieldtype": "Currency",
+   "label": "Prix Achat",
+   "options": "company_currency"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-03-25 08:44:12.864075",
+ "modified": "2023-10-16 18:06:03.773612",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Sales Details",

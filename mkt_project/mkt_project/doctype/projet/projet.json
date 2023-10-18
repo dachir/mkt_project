@@ -62,6 +62,10 @@
   "section_break_25",
   "details",
   "section_break_19",
+  "sponsoring_section",
+  "coefficient",
+  "column_break_t5d2w",
+  "frais_sponsoring",
   "sales_section",
   "sellings",
   "section_break_mat_log",
@@ -293,7 +297,7 @@
    "fieldname": "agence",
    "fieldtype": "Link",
    "label": "Agence / Organisateur",
-   "options": "Customer",
+   "options": "Supplier",
    "reqd": 1
   },
   {
@@ -380,10 +384,10 @@
   {
    "fieldname": "buying_selling_price",
    "fieldtype": "Link",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Liste Prix",
-   "options": "Price List",
-   "reqd": 1
+   "options": "Price List"
   },
   {
    "depends_on": "eval:doc.tasting!=0",
@@ -638,7 +642,7 @@
   {
    "fieldname": "nb_survey",
    "fieldtype": "Data",
-   "label": "Survey"
+   "label": "Quota Mensuel"
   },
   {
    "fieldname": "column_break_91",
@@ -707,6 +711,25 @@
    "fieldtype": "Link",
    "label": "Depot",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "coefficient",
+   "fieldtype": "Float",
+   "label": "Coefficient"
+  },
+  {
+   "fieldname": "column_break_t5d2w",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "frais_sponsoring",
+   "fieldtype": "Data",
+   "label": "Frais Sponsoring"
+  },
+  {
+   "fieldname": "sponsoring_section",
+   "fieldtype": "Section Break",
+   "label": "Sponsoring"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -728,7 +751,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2023-10-09 13:00:20.995223",
+ "modified": "2023-10-16 18:19:38.657957",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
