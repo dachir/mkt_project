@@ -71,6 +71,20 @@ def get_sage_cm29_price(item):
 		return row['price']
 	return 0
 
+
+@frappe.whitelist()
+def get_package_cost(site,item):
+
+	result =  frappe.db.sql(
+		"""
+		SELECT cout, prix_achat
+		FROM `tabUnite Vente`
+		WHERE branch = %s AND name = %s
+		""", (site,item), as_dict = 1
+	)
+
+	return result[0] if len(result) > 0 else 0
+
 #@frappe.whitelist()
 #def get_label(item):
 	#doc = frappe.get_doc("")

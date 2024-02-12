@@ -57,7 +57,7 @@ frappe.ui.form.on('Projet', {
 				frm.doc.rh_sales.forEach(e => {
 					volume += e.nombre * e.objectif_jour;
 				});
-				volume *= frm.doc.duration;
+				volume *= frm.doc.duree_vente;
 				frm.doc.sellings.forEach(e => {
 					revenue += e.prix_vente * frm.doc.exchange_rate * volume;
 				});
@@ -76,7 +76,7 @@ frappe.ui.form.on('Projet', {
 				frm.doc.rh_tasting.forEach(e => {
 					volume += e.nombre * e.objectif_jour;
 				});
-				volume *= frm.doc.duration;
+				volume *= frm.doc.duree_tasting;
 
 				frm.set_value("audience_tasting", volume);
 				frm.set_value("volume_tasting", volume);
@@ -88,7 +88,7 @@ frappe.ui.form.on('Projet', {
 				frm.doc.rh_sampling.forEach(e => {
 					volume += e.nombre * e.objectif_jour;
 				});
-				volume *= frm.doc.duration;
+				volume *= frm.doc.duree_sampling;
 
 				frm.doc.audience_sampling = volume;
 				frm.doc.volume_sampling = volume;
@@ -97,7 +97,7 @@ frappe.ui.form.on('Projet', {
 				frm.doc.rh_survey.forEach(e => {
 					volume += e.nombre * e.objectif_jour;
 				});
-				volume *= frm.doc.duration;
+				volume *= frm.doc.duree_survey;
 
 				//affectations deu volume a chaque ligne tasting
 				frm.doc.samplings.forEach(e => {e.qty = volume});
@@ -160,9 +160,9 @@ frappe.ui.form.on('Projet', {
 					var row = frm.add_child('details');
 					//row.item = e.item;
 					row.description = e.description;
-					row.qte = e.qty * frm.doc.duration;
+					row.qte = e.qty;
 					row.pu = e.cout;
-					row.total = row.qte * row.pu;
+					row.total = row.qte * row.pu * e.conso_litre;
 					row.type = 'Logistique';
 					row.order = 'A4';
 				});
@@ -171,7 +171,7 @@ frappe.ui.form.on('Projet', {
 					row.document_type = "Promoteur Salaire";
 					//row.item = e.type;
 					row.description = e.type;
-					row.qte = e.nombre * frm.doc.duration;
+					row.qte = e.nombre * frm.doc.duree_vente;
 					row.pu = (e.transport_jour + e.salaire_jour) ;
 					row.total = row.qte * row.pu;
 					row.type = 'Staff';
@@ -203,7 +203,7 @@ frappe.ui.form.on('Projet', {
 					row.document_type = "Promoteur Salaire";
 					//row.item = e.type;
 					row.description = e.type;
-					row.qte = e.nombre * frm.doc.duration;
+					row.qte = e.nombre * frm.doc.duree_sampling;
 					row.pu = (e.transport_jour + e.salaire_jour);
 					row.total = row.qte * row.pu;
 					row.type = 'Staff';
@@ -235,7 +235,7 @@ frappe.ui.form.on('Projet', {
 					row.document_type = "Promoteur Salaire";
 					//row.item = e.type;
 					row.description = e.type;
-					row.qte = e.nombre * frm.doc.duration;
+					row.qte = e.nombre * frm.doc.duree_tasting;
 					row.pu = (e.transport_jour + e.salaire_jour) ;
 					row.total = row.qte * row.pu;
 					row.type = 'Staff';
@@ -247,7 +247,7 @@ frappe.ui.form.on('Projet', {
 					row.document_type = "Promoteur Salaire";
 					//row.item = e.type;
 					row.description = e.type;
-					row.qte = e.nombre * frm.doc.duration;
+					row.qte = e.nombre * frm.doc.duree_survey;
 					row.pu = (e.transport_jour + e.salaire_jour) ;
 					row.total = row.qte * row.pu;
 					row.type = 'Staff';
@@ -271,9 +271,22 @@ frappe.ui.form.on('Projet', {
 					row.qte = e.qty * frm.doc.duration;
 					row.pu = e.cout;
 					row.total = row.qte * row.pu;
-					row.type = 'Media';
+					row.type = 'Media & Autres';
 					row.order = 'E';
 				});
+
+				frm.doc.rh_media.forEach(e => {
+					var row = frm.add_child('details');
+					row.document_type = "Promoteur Salaire";
+					//row.item = e.type;
+					row.description = e.type;
+					row.qte = e.nombre * frm.doc.duree_tasting;
+					row.pu = (e.transport_jour + e.salaire_jour) ;
+					row.total = row.qte * row.pu;
+					row.type = 'Staff';
+					row.order = 'E1';
+				});
+
 				frm.refresh_field('details');
 			}, "Utilitaires"
 		);
@@ -298,10 +311,47 @@ frappe.ui.form.on('Projet', {
 		on_activite_change(frm);
 	},
 	start_date: function(frm){
-		if(frm.doc.start_date && frm.doc.end_date) frm.set_value("duration",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+		if(frm.doc.start_date && frm.doc.end_date) {
+			frm.set_value("duration",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+			frm.set_value("duree_vente",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+			frm.set_value("duree_tasting",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+			frm.set_value("duree_sampling",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+			frm.set_value("duree_survey",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+		}
+		frm.refresh_field("duration");
+		frm.refresh_field("duree_vente");
+		frm.refresh_field("duree_sampling");
+		frm.refresh_field("duree_tasting");
+		frm.refresh_field("duree_survey");
 	},
 	end_date: function(frm){
-		if(frm.doc.start_date && frm.doc.end_date) frm.set_value("duration",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+		if(frm.doc.start_date && frm.doc.end_date) {
+			frm.set_value("duration",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+			frm.set_value("duree_vente",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+			frm.set_value("duree_tasting",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+			frm.set_value("duree_sampling",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+			frm.set_value("duree_survey",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+		}
+		frm.refresh_field("duration");
+		frm.refresh_field("duree_vente");
+		frm.refresh_field("duree_sampling");
+		frm.refresh_field("duree_tasting");
+		frm.refresh_field("duree_survey");
+	},
+
+	duration: function(frm){
+		if(frm.doc.duration) {
+			frm.set_value("duree_vente",frm.doc.duration);
+			frm.set_value("duree_tasting",frm.doc.duration);
+			frm.set_value("duree_sampling",frm.doc.duration);
+			frm.set_value("duree_survey",frm.doc.duration);
+		}
+		frm.refresh_field("duree_vente");
+		frm.refresh_field("duree_sampling");
+		frm.refresh_field("duree_tasting");
+		frm.refresh_field("duree_survey");
 	},
 
 	get_exchange_rate: function(frm){
@@ -327,6 +377,27 @@ frappe.ui.form.on('Projet', {
 		return new Promise((resolve, reject) => {
 			frm.call({
 				method: "get_sage_item_cost",
+				args: {
+					"site": frm.doc.branch,
+					"item": item,
+				},
+				callback: (r) => {
+					//frm.refresh();
+					if (r.message) resolve(r.message);
+					else resolve(0);
+				},
+				error: (err) => {
+					// Handle any errors here
+					reject(err);
+				},
+			});
+		});
+	},
+
+	get_package_cost : function(frm, item) {
+		return new Promise((resolve, reject) => {
+			frm.call({
+				method: "get_package_cost",
 				args: {
 					"site": frm.doc.branch,
 					"item": item,
@@ -612,8 +683,15 @@ const clear_sampling = (frm) =>{
 frappe.ui.form.on('Sales Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_sage_cm29_price(frm,row.item).then((result)=> row.prix_achat = result)
-		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
+		
+		if(row.item_group != "Package") {
+			cur_frm.events.get_sage_cm29_price(frm,row.item).then((result)=> row.prix_achat = result);
+			cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result.cout);
+		}
+		else {
+			cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.prix_achat = result.prix_achat);
+			cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
+		}
 		frm.refresh_field("sellings");
     },
 });
@@ -634,7 +712,8 @@ frappe.ui.form.on('Logistic Details', {
 frappe.ui.form.on('Tasting Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
+		if(row.item_group != "Package") cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result);
+		else cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
 		frm.refresh_field("tastings");
     },
 });
@@ -649,7 +728,8 @@ frappe.ui.form.on('Tasting Material Details', {
 frappe.ui.form.on('Sampling Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
+		if(row.item_group != "Package") cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result);
+		else cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
 		frm.refresh_field("samplings");
     },
 });
@@ -658,5 +738,12 @@ frappe.ui.form.on('Sampling Material Details', {
 		var row = locals[cdt][cdn]; 
 		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
 		frm.refresh_field("sampling_material_details");
+    },
+});
+frappe.ui.form.on('Visibility Details', {
+    item(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result)
+		frm.refresh_field("visibilities");
     },
 });

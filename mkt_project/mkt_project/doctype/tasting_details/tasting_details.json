@@ -11,7 +11,8 @@
   "description",
   "qty",
   "cout",
-  "variant"
+  "variant",
+  "item_group"
  ],
  "fields": [
   {
@@ -42,12 +43,19 @@
    "fieldtype": "Select",
    "label": "Variant",
    "options": "\nV0\nV1\nV2\nV3\nV4\nV5\nV6\nV7\nV8\nV9"
+  },
+  {
+   "fetch_from": "item.item_group",
+   "fieldname": "item_group",
+   "fieldtype": "Data",
+   "label": "Item Group",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-03-25 08:43:58.771852",
+ "modified": "2023-12-15 08:58:10.274801",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Tasting Details",

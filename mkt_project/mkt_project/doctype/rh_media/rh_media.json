@@ -1,0 +1,80 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-02-06 11:48:46.425963",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "type",
+  "nombre",
+  "objectif_jour",
+  "transport_jour",
+  "salaire_jour",
+  "devise",
+  "extra"
+ ],
+ "fields": [
+  {
+   "fieldname": "type",
+   "fieldtype": "Link",
+   "label": "Type",
+   "options": "Promoteur Salaire"
+  },
+  {
+   "fieldname": "nombre",
+   "fieldtype": "Int",
+   "label": "Nombre"
+  },
+  {
+   "default": "0",
+   "fieldname": "objectif_jour",
+   "fieldtype": "Int",
+   "label": "Objectif Jour"
+  },
+  {
+   "fetch_from": "type.transport_jour",
+   "fieldname": "transport_jour",
+   "fieldtype": "Currency",
+   "label": "Transport Jour",
+   "options": "devise",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "type.salaire_jour",
+   "fieldname": "salaire_jour",
+   "fieldtype": "Currency",
+   "label": "Salaire Jour",
+   "options": "devise",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "type.devise",
+   "fieldname": "devise",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Devise",
+   "options": "Currency"
+  },
+  {
+   "fetch_from": "type.extra",
+   "fieldname": "extra",
+   "fieldtype": "Currency",
+   "label": "Extra",
+   "options": "currency"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-02-06 11:48:46.425963",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "RH Media",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

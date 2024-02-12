@@ -9,11 +9,14 @@
  "engine": "InnoDB",
  "field_order": [
   "basic_section",
+  "branch",
+  "column_break_lohsi",
   "new_item_code",
   "description",
   "section_break_4",
   "prix_vente",
   "cout",
+  "prix_achat",
   "column_break_6",
   "devise",
   "devise_cout",
@@ -93,11 +96,28 @@
    "fieldtype": "Link",
    "label": "Devise Cout",
    "options": "Currency"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "column_break_lohsi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "prix_achat",
+   "fieldtype": "Currency",
+   "label": "Prix Achat",
+   "options": "devise_cout",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-sitemap",
  "links": [],
- "modified": "2023-04-01 09:21:09.283929",
+ "modified": "2023-12-15 09:58:04.946786",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Unite Vente",
