@@ -686,7 +686,7 @@ frappe.ui.form.on('Sales Details', {
 		
 		if(row.item_group != "Package") {
 			cur_frm.events.get_sage_cm29_price(frm,row.item).then((result)=> row.prix_achat = result);
-			cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result.cout);
+			cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result);
 		}
 		else {
 			cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.prix_achat = result.prix_achat);
