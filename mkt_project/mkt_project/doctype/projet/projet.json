@@ -39,6 +39,8 @@
   "marques",
   "produits",
   "section_break_02",
+  "mois",
+  "section_break_xooff",
   "start_date",
   "duration",
   "column_break_3",
@@ -66,6 +68,7 @@
   "coefficient",
   "column_break_t5d2w",
   "frais_sponsoring",
+  "column_break_o0pb9",
   "sales_section",
   "sellings",
   "section_break_mat_log",
@@ -79,6 +82,7 @@
   "column_break_sales_1",
   "revenue_sales",
   "column_break_sales_3",
+  "duree_vente",
   "rh_section",
   "rh_sales",
   "tasting_tab",
@@ -91,6 +95,7 @@
   "column_break_tasting_1",
   "volume_tasting",
   "column_break_tasting_3",
+  "duree_tasting",
   "column_break_tasting_2",
   "rh_section_break_tasting",
   "rh_tasting",
@@ -104,6 +109,7 @@
   "column_break_sampling_1",
   "volume_sampling",
   "column_break_sampling_3",
+  "duree_sampling",
   "column_break_sampling_2",
   "rh_section_break_sampling",
   "rh_sampling",
@@ -113,6 +119,7 @@
   "column_break_89",
   "nb_survey",
   "column_break_91",
+  "duree_survey",
   "column_break_92",
   "section_break_survey_objectif",
   "rh_survey",
@@ -121,6 +128,7 @@
   "column_break_survey",
   "media_tab",
   "visibilities",
+  "rh_media",
   "amended_from"
  ],
  "fields": [
@@ -279,7 +287,8 @@
    "fieldname": "details",
    "fieldtype": "Table",
    "label": "Details",
-   "options": "Budget Details"
+   "options": "Budget Details",
+   "read_only": 1
   },
   {
    "fieldname": "activity_type",
@@ -452,7 +461,7 @@
    "depends_on": "eval:doc.visibility!=0",
    "fieldname": "media_tab",
    "fieldtype": "Tab Break",
-   "label": "Media"
+   "label": "Media & Autres"
   },
   {
    "fieldname": "column_break_112",
@@ -723,13 +732,53 @@
   },
   {
    "fieldname": "frais_sponsoring",
-   "fieldtype": "Data",
+   "fieldtype": "Currency",
    "label": "Frais Sponsoring"
   },
   {
    "fieldname": "sponsoring_section",
    "fieldtype": "Section Break",
    "label": "Sponsoring"
+  },
+  {
+   "fieldname": "mois",
+   "fieldtype": "Select",
+   "label": "Mois",
+   "options": "Janvier\nF\u00e9vrier\nMars\nAvril\nMai\nJuin\nJuillet\nAo\u00fbt\nSeptembre\nOctobre\nNovembre\nD\u00e9cembre"
+  },
+  {
+   "fieldname": "section_break_xooff",
+   "fieldtype": "Section Break",
+   "hide_border": 1
+  },
+  {
+   "fieldname": "column_break_o0pb9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "duree_vente",
+   "fieldtype": "Data",
+   "label": "Duree Vente"
+  },
+  {
+   "fieldname": "duree_tasting",
+   "fieldtype": "Int",
+   "label": "Duree Tasting"
+  },
+  {
+   "fieldname": "duree_sampling",
+   "fieldtype": "Data",
+   "label": "Duree Sampling"
+  },
+  {
+   "fieldname": "duree_survey",
+   "fieldtype": "Data",
+   "label": "Duree Survey"
+  },
+  {
+   "fieldname": "rh_media",
+   "fieldtype": "Table",
+   "options": "RH Media"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -751,7 +800,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2023-10-16 18:19:38.657957",
+ "modified": "2024-04-25 14:53:06.761255",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
