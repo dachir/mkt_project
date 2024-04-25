@@ -190,3 +190,9 @@ app_license = "MIT"
 # auth_hooks = [
 #	"mkt_project.auth.validate"
 # ]
+
+fixtures = [
+    {"dt": "Custom Field", "filters": [["module", "=", "Mkt Project"]]},
+    {"dt": "Client Script", "filters": [["enabled", "=", 1],["module", "=", "Mkt Project"]]},
+    {"dt": "Server Script", "filters": [["disabled", "=", 0],["module", "=", "Mkt Project"]]},
+]
