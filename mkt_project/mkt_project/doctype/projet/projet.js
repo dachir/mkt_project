@@ -373,6 +373,27 @@ frappe.ui.form.on('Projet', {
 			}
 		}
 	},
+	get_sage_selling_price: function(frm, item) {
+		return new Promise((resolve, reject) => {
+			frm.call({
+				method: "get_sage_selling_price",
+				args: {
+					"site": frm.doc.branch,
+					"item": item,
+				},
+				callback: (r) => {
+					//frm.refresh();
+					if (r.message) resolve(r.message);
+					else resolve(0);
+				},
+				error: (err) => {
+					// Handle any errors here
+					reject(err);
+				},
+			});
+		});
+	},
+
 	get_sage_item_cost: function(frm, item) {
 		return new Promise((resolve, reject) => {
 			frm.call({
@@ -686,7 +707,7 @@ frappe.ui.form.on('Sales Details', {
 		
 		if(row.item_group != "Package") {
 			cur_frm.events.get_sage_cm29_price(frm,row.item).then((result)=> row.prix_achat = result);
-			cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result);
+			cur_frm.events.get_sage_selling_price(frm,row.item).then((result)=> row.cout = result);
 		}
 		else {
 			cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.prix_achat = result.prix_achat);
@@ -712,7 +733,7 @@ frappe.ui.form.on('Logistic Details', {
 frappe.ui.form.on('Tasting Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		if(row.item_group != "Package") cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result);
+		if(row.item_group != "Package") cur_frm.events.get_sage_selling_price(frm,row.item).then((result)=> row.cout = result);
 		else cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
 		frm.refresh_field("tastings");
     },
@@ -728,7 +749,7 @@ frappe.ui.form.on('Tasting Material Details', {
 frappe.ui.form.on('Sampling Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
-		if(row.item_group != "Package") cur_frm.events.get_sage_item_cost(frm,row.item).then((result)=> row.cout = result);
+		if(row.item_group != "Package") cur_frm.events.get_sage_selling_price(frm,row.item).then((result)=> row.cout = result);
 		else cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
 		frm.refresh_field("samplings");
     },

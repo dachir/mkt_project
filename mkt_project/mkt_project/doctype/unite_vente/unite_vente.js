@@ -18,7 +18,7 @@ frappe.ui.form.on('Unite Vente', {
 				const sumOfCosts = await Promise.all(variantItems.map(({ item_code, qty }) => {
 					return new Promise((resolve, reject) => {
 						frappe.call({
-							method: "mkt_project.mkt_project.doctype.projet.projet.get_sage_item_cost",
+							method: "mkt_project.mkt_project.doctype.projet.projet.get_sage_selling_price",
 							args: {
 								"site": frm.doc.branch,
 								"item": item_code,

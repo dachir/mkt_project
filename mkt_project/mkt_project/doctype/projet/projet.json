@@ -300,7 +300,8 @@
   },
   {
    "fieldname": "section_break_2",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "read_only_depends_on": "eval:doc.selling!=0"
   },
   {
    "fieldname": "agence",
@@ -800,7 +801,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2024-04-25 14:53:06.761255",
+ "modified": "2024-04-25 15:34:15.135961",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
