@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
-from frappe.model.document import Document
+from frappe.website.website_generator import WebsiteGenerator
 from frappe.model.naming import getseries
 from frappe.utils import getdate
 from erpnext.utilities.product import get_price
@@ -14,8 +14,11 @@ from erpnext.stock.get_item_details import (
 )
 import pymssql
 
-class Projet(Document):
-	pass
+class Projet(WebsiteGenerator):
+	def before_submit(self):
+		self.route = self.name
+		self.is_published = 1
+
 	#def autoname(self):
     #    # select a project name based on customer
 	#	prefix = 'P-{}-'.format(self.customer)

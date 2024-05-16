@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_guest_to_view": 1,
  "allow_rename": 1,
  "autoname": "format:{MM}{YY}/{activity_type}/{marque_principale}/{agence}/{##}",
  "creation": "2023-02-11 09:19:53.390172",
@@ -63,6 +64,18 @@
   "visibility",
   "section_break_25",
   "details",
+  "route",
+  "is_published",
+  "signataire_section",
+  "bm",
+  "column_break_n9x6e",
+  "hod",
+  "column_break_zqhmz",
+  "cfo",
+  "column_break_emzak",
+  "ceo",
+  "column_break_ewgwt",
+  "audit",
   "section_break_19",
   "sponsoring_section",
   "coefficient",
@@ -780,9 +793,68 @@
    "fieldname": "rh_media",
    "fieldtype": "Table",
    "options": "RH Media"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Is Published"
+  },
+  {
+   "fieldname": "signataire_section",
+   "fieldtype": "Section Break",
+   "label": "Signataire"
+  },
+  {
+   "fieldname": "bm",
+   "fieldtype": "Data",
+   "label": "BM"
+  },
+  {
+   "fieldname": "column_break_n9x6e",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hod",
+   "fieldtype": "Data",
+   "label": "HOD"
+  },
+  {
+   "fieldname": "column_break_zqhmz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cfo",
+   "fieldtype": "Data",
+   "label": "CFO"
+  },
+  {
+   "fieldname": "column_break_emzak",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ceo",
+   "fieldtype": "Data",
+   "label": "CEO"
+  },
+  {
+   "fieldname": "column_break_ewgwt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "audit",
+   "fieldtype": "Data",
+   "label": "Audit"
   }
  ],
+ "has_web_view": 1,
  "index_web_pages_for_search": 1,
+ "is_published_field": "is_published",
  "is_submittable": 1,
  "links": [
   {
@@ -801,7 +873,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2024-04-25 15:34:15.135961",
+ "modified": "2024-05-04 13:39:51.225323",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
@@ -833,6 +905,7 @@
    "write": 1
   }
  ],
+ "route": "mkt_projets",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

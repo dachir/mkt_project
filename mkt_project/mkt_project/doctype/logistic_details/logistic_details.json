@@ -18,7 +18,7 @@
    "fieldname": "item",
    "fieldtype": "Link",
    "label": "Produit",
-   "options": "Item"
+   "options": "Marketing Item"
   },
   {
    "fieldname": "qty",
@@ -31,7 +31,7 @@
    "label": "Prix \\ L"
   },
   {
-   "fetch_from": "item.item_name",
+   "fetch_from": "item.description",
    "fieldname": "description",
    "fieldtype": "Data",
    "label": "Description",
@@ -46,7 +46,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-18 19:12:20.586220",
+ "modified": "2024-05-16 10:36:33.765768",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Logistic Details",

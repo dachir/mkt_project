@@ -1,0 +1,676 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+	<style>
+		/* CSS code goes here */
+		.border {
+			border: 1px solid #dee2e6;
+		}
+		.border-left {
+			border-left: 1px solid #dee2e6;
+			margin-left: -1px;
+		}
+		.border-right {
+			border-right: 1px solid #dee2e6;
+		}
+		.align-middle {
+			vertical-align: middle;
+		}
+		.h-30 {
+				height: 30px;
+			}
+		.mh-30 {
+			min-height: 10px;
+		}
+		.h-100 {
+			height: 100%;
+		}
+		.mh-100 {
+			max-height: 100%;
+		}
+		.d-inline-block {
+			display: inline-block;
+		}
+		.row-no-margin {
+		margin-top:-1px;
+		margin-right: -1px;
+		margin-left: -1px;
+		/*height: 25px;*/
+		}
+		.parent {
+		display: flex;
+		align-items: stretch;
+		}
+		.child {
+		flex: 1;
+		}
+		.bgcolor {
+			background-color: beige;
+		}
+		.right_align {
+		text-align: right;
+		/*border: 1px solid green;*/
+		}
+		.nopadding {
+		padding: 0 !important;
+		margin: 0 !important;
+		}
+		.separator {
+		background-color: beige; /* Gray color */
+		height: 10px; /* Adjust the height of the separator as needed */
+		}
+
+		[document-status]{
+			margin-bottom: 0;
+			visibility: hidden;
+			height:0;
+		}
+
+		.mid_center_align {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.rigth_center_align {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: right;
+		}
+		.left_center_align {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: left;
+		}
+		.padding_left_right {
+			padding-left: 5px;
+			padding-right: 5px;
+		}
+		.margin_left_right {
+			margin-left: 5px;
+			margin-right: 5px;
+		}
+		.page_break_after {
+			page-break-after: always;
+		}
+		.page_break_before {
+			page-break-before: always;
+		}
+		.title_1 {
+			font-size: 1.2rem; 
+		}
+		.title_2 {
+			font-size: 1rem; 
+		}
+		.title_3 {
+			font-size: 0.8rem; 
+		}
+
+		.font_bold {
+			font-weight: bold;
+		}
+
+		.bg_green {
+			background-color: #E9F6DE;
+		}
+		.bg_gray {
+			background-color: #F4F5F6;
+		}
+		.signature {
+			height: 60px;
+		}
+
+		.mid_left_align {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			/*justify-content: center;*/
+		}
+		.Titre_table {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			margin: 0; /* Remove any margin */
+			padding: 0; /* Remove any padding */
+		}
+		.print-ft {
+			font-size: 9pt;
+			font-family: Inter, "Helvetica Neue", Helvetica, Arial, "Open Sans", sans-serif;
+			/*-webkit-print-color-adjust: exact;*/
+		}
+		.no-border{
+			border: 0px !important;
+		}
+		/*@page {
+		size: A4;
+		margin: 0;
+		}
+		@media print {
+		html, body {
+			width: 210mm;
+			height: 297mm;
+		}
+		
+		}*/
+	</style>
+	<script>
+		function validateForm(docname) {
+			// Perform form validation logic here
+			alert(docname + " Form validated!"); // For demonstration purposes; replace with actual validation logic
+		}
+	</script>
+
+	<!-- MECANIC -->
+	{% macro generate_table(title) %}
+	<table class="table table-bordered" style="margin: 0px !important; padding: 0px !important;">
+	<tbody>
+		<tr>
+		<td colspan="2" class="text-center" style="margin: 0px !important; padding: 0px !important;">
+			<div class="Titre_table">{{ title }}</div>
+		</td>
+		</tr>
+		{% if title == "SELLING" %}
+			{% set m_products = frappe.db.sql("SELECT item, qty, prix_vente FROM `tabSales Details` WHERE parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1) %}
+			<tr>
+			<td class="text-left" style="padding: 0px !important; width: 25%;margin: 0px !important; padding: 0px !important;">
+				<small class="margin_left_right">Piece</small>
+			</td>
+			<td class="text-left" style="padding: 0px !important; width: 75%;margin: 0px !important; padding: 0px !important;">
+				<small class="margin_left_right" style="display: block; width: 100%;">{{ m_products[0].prix_vente }}</small>
+			</td>
+			</tr>
+		{% elif title == "TASTING" %}
+			{% set m_products = frappe.db.sql("SELECT item, qty FROM `tabTasting Details` WHERE parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1) %}
+		{% elif title == "SAMPLING" %}
+			{% set m_products = frappe.db.sql("SELECT item, qty FROM `tabSampling Details` WHERE parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1) %}
+		{% elif title == "SURVEY" %}
+			{% set m_products = frappe.db.sql("SELECT type, nombre FROM `tabRH Survey` WHERE parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1) %}
+		{% elif title == "AUTRES" %}
+			{% set m_products = frappe.db.sql("SELECT item, qty FROM `tabVisibility Details` WHERE parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1) %}
+		{% endif %}
+		{% for p in m_products %}
+			{% if title != "SURVEY" %}
+				{% set item_name = frappe.db.get_value("Item", p.item,"item_name") %} 
+				<tr>
+				<td class="text-left" style="padding: 0px !important; width: 25%;margin: 0px !important; padding: 0px !important;">
+					<small class="margin_left_right">1</small>
+				</td>
+				<td class="text-left" style="padding: 0px !important; width: 75%;margin: 0px !important; padding: 0px !important;">
+					<small class="margin_left_right" style="display: block; width: 100%;">{{ item_name }}</small>
+				</td>
+				</tr>
+			{% else %}
+				<tr>
+				<td class="text-left" style="padding: 0px !important; width: 25%">
+					<small class="margin_left_right" style="display: block; width: 100%;">{{ p.nombre }}</small>
+				</td>
+				<td class="text-left" style="padding: 0px !important; width: 75%;">
+					<small class="margin_left_right" style="display: block; width: 100%;">{{ p.type }}</small>
+				</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+	</tbody>
+	</table>	
+	{% endmacro %}
+	<!-- MECANIC -->
+
+	<table class="table table-bordered" >
+	<tbody>
+	<tr style="height: 30px;">
+	<td  class="text-left" style="padding: 2px !important;width: 25%">
+		<img src="/private/files/logo.png" class="card-img-top" alt="MARSAVCO SA">
+	</td>
+	<td  class="text-left" style="padding: 0px !important;width: 75%; ">
+		<div class="bgcolor Titre_table" style="width: 100%;height:73px"><center><h1>{{doc.titre}}</h1></center>
+		</div>
+	</td>
+	</tr>
+	<tr style="height: 30px;">
+	<td  class="text-left" style="padding: 2px !important;width: 25%">
+		<small class="mid_left_align margin_left_right">PROJECT CODE</small>
+	</td>
+	<td  class="text-left" style="padding: 0px !important;width: 75%; ">
+		<table class="print-ft" style="width:100%">
+		<tbody>
+			<tr>
+				<td  class="text-left" style="padding: 0px !important;width: 40%;border: 0px !important;">
+					<small class="margin_left_right">{{doc.name}}</small>
+				</td>
+				<td  class="text-left" style="padding: 0px !important;width: 30%;border: 0px !important;">
+					<small class="margin_left_right">START DATE: {{" "}}{{ doc.start_date }}</small>
+				</td>
+				<td  class="text-left" style="padding: 0px !important;width: 30%;border: 0px !important;">
+					<small class="margin_left_right">START TIME: {{" "}}{{ doc.start_time }}</small>
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</td>
+	</tr>
+
+	<tr style="height: 30px;">
+	<td  class="text-left" style="padding: 2px !important;width: 25%">
+		<small class="mid_left_align margin_left_right">PROJECT LEADER</small>
+	</td>
+	<td  class="text-left" style="padding: 0px !important;width: 75%; ">
+		<table class="table-borderless print-ft"  style="width:100%">
+		<tbody>
+			<tr>
+				<td  class="text-left" style="padding: 0px !important;width: 40%;border: 0px !important;">
+					<small class="margin_left_right">{{frappe.db.get_value("User", doc.leader,"full_name")}}</small>
+				</td>
+				<td  class="text-left" style="padding: 0px !important;width: 30%;border: 0px !important;">
+					<small class="margin_left_right">END DATE: {{" "}}{{ doc.end_date }}</small>
+				</td>
+				<td  class="text-left" style="padding: 0px !important;width: 30%;border: 0px !important;">
+					<small class="margin_left_right">END TIME: {{" "}}{{ doc.end_time }}</small>
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</td>
+	</tr>
+
+	<tr style="height: 30px;">
+	<td  class="text-left" style="padding: 2px !important;width: 25%">
+		<small class="mid_left_align margin_left_right">LOCATION</small>
+	</td>
+	<td  class="text-left" style="padding: 0px !important;width: 75%; ">
+		<table class="table-borderless print-ft"  style="width:100%">
+		<tbody>
+			<tr>
+				<td  class="text-left" style="padding: 0px !important;width: 40%;border: 0px !important;">
+					<small class="margin_left_right">{{ doc.lieu }}</small>
+				</td>
+				<td  class="text-left" style="padding: 0px !important;width: 30%;border: 0px !important;">
+					<small class="margin_left_right">DURATION (in days): {{" "}}{{ doc.duration }}</small>
+				</td>
+				<td  class="text-left" style="padding: 0px !important;width: 30%;border: 0px !important;">
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</td>
+	</tr>
+
+	<tr style="height: 30px;">
+	<td  class="text-left" style="padding: 2px !important;width: 25%;min-height: 30px;">
+		<small class="mid_left_align margin_left_right">SUPPLIER</small>
+	</td>
+	<td  class="text-left" style="padding: 0px !important;width: 75%; ">
+		<small class="margin_left_right">{{frappe.db.get_value("Supplier", doc.agence,"supplier_name")}}</small>
+	</td>
+	</tr>
+
+	<tr style="height: 30px;">
+	<td  class="text-left" style="padding: 2px !important;width: 25%">
+		<small class="mid_left_align margin_left_right">BRANDS & PRODUCTS</small>
+	</td>
+	<td  class="text-left" style="padding: 0px !important;width: 75%; ">
+		<table class="table-borderless print-ft"  style="width:100%">
+		<tbody>
+			<tr>
+				<td  class="text-left" style="padding: 0px !important;width: 20%">
+					<small class="margin_left_right">{{ doc.marque_principale }}</small>
+				</td>
+				<td  class="text-left" style="padding: 0px !important;width: 80%">
+					<small class="margin_left_right">
+						{% set products = frappe.db.sql("SELECT d.item, i.item_name FROM `tabItem Details` d INNER JOIN `tabItem` i ON i.name = d.item WHERE d.parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1) %}
+						{% for p in products %}
+							<span>{{p["item_name"]}}  {{","}}</span>
+						{% endfor %}
+					</small>
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</td>
+	</tr>
+
+	<tr>
+	<td  class="text-left" style="padding: 0px !important;">
+		<small class="mid_left_align margin_left_right">CONTEXT</small>
+	</td>
+	<td  class="text-left" style="padding: 0px !important;">
+		<small class="margin_left_right">{{doc.context}}</small>
+	</td>
+	</tr>
+
+	<tr  style="min-height: 30px;">
+	<td  class="text-left" style="padding: 0px !important;">
+		<small class="mid_left_align margin_left_right">OBJECTIVE</small>
+	</td>
+	<td  class="text-left" style="padding: 0px !important;">
+		<small class="margin_left_right">{{doc.objective}}</small>
+	</td>
+	</tr>
+
+	<tr  style="min-height: 30px;">
+	<td  class="text-left" style="padding: 0px !important;" colspan="2">
+		<div class="row-no-margin border parent separator"></div>
+	</td>
+	</tr>
+
+
+
+	{% set mecanics = []  %}
+	{% if doc.selling == 1 %}
+		{% set row = ['selling','Sales Details']  %}
+		{% set  _ = mecanics.append(row) %}
+	{% endif %}
+	{% if doc.tasting == 1 %}
+		{% set row = ['tasting','Tasting Details']  %}
+		{% set  _ = mecanics.append(row) %}
+	{% endif %}
+	{% if doc.sampling == 1 %}
+		{% set row = ['sampling','Sampling Details']  %}
+		{% set  _ = mecanics.append(row) %}
+	{% endif %}
+	{% if doc.survey == 1 %}
+		{% set row = ['survey','RH Survey']  %}
+		{% set  _ = mecanics.append(row) %}
+	{% endif %}
+	{% if doc.visibility == 1 %}
+		{% set row = ['autres','Visibility Details']  %}
+		{% set  _ = mecanics.append(row) %}
+	{% endif %}
+
+
+	<!-- Loop throw mecanics -->
+	<tr>
+		<td  class="text-left" style="padding: 0px !important;">
+			<small class="mid_left_align margin_left_right">MECANICS</small>
+		</td>
+		<td colspan="2" style="padding: 0px !important;">
+			<table class="table-borderless print-ft" style="border: 0px !important; padding: 0px !important;">
+			<tbody>
+				{% for m in mecanics %}
+					{% if loop.index % 2 == 1 %}
+						<tr>
+					{% endif %}
+					<td class="text-left" style="width: 50%;border: 0px !important; padding: 0px !important;">
+						{% set title = m[0]  %}
+						{{ generate_table(title|upper) }}
+					</td>
+					{% if loop.index % 2 == 0 or loop.last %}
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+			</table>
+		</td>
+	</tr>
+
+	<tr style="height: 30px;">
+	<td  class="text-left" style="padding: 2px !important;width: 25%">
+		<small class="mid_left_align margin_left_right">TARGET</small>
+	</td>
+	<td  class="text-left" style="padding: 0px !important;width: 75%; ">
+		<table class="table-borderless print-ft"  style="width:100%">
+		<tbody>
+			{% if doc.selling == 1 %}
+			{% set rh_doc = frappe.db.sql("SELECT sum(nombre) as nombre FROM `tabRH Sales` WHERE parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1) %}
+			{% set nb = rh_doc[0].nombre * doc.duration|float %}
+			<tr>
+				<td  class="text-left" style="padding: 0px !important;width: 34%">
+					<small class="mid_left_align margin_left_right">Sales Pack/Day/Promoter: {{ frappe.utils.fmt_money(nb, currency = '', precision = 0) }}</small>
+				</td>
+				<td  class="text-left" style="padding: 0px !important;width: 33%"> 
+					<small class="mid_left_align margin_left_right">Sales: {{" "}}{{ frappe.utils.fmt_money(doc.revenue_sales, currency = '', precision = 0) }}</small>
+				</td>
+				{% if my_list|length > 1 %}
+					{% if doc.tasting == 1 %}
+						<td  class="text-left" style="padding: 0px !important;width: 33%">  
+							<small class="mid_left_align margin_left_right">Consommateur Tasting: {{" "}}{{ frappe.utils.fmt_money(doc.revenue_tasting, currency = '', precision = 0) }}</small>
+						</td>
+					{% else %}
+						<td  class="text-left" style="padding: 0px !important;width: 33%">  
+							<small class="mid_left_align margin_left_right">Consommateur Sampling: {{" "}}{{ frappe.utils.fmt_money(doc.revenue_sampling, currency = '', precision = 0) }}</small>
+						</td>
+					{% endif %}
+				{% endif %}
+			</tr>
+		
+		<tr>
+			<td  class="text-left" style="padding: 0px !important;width: 33%"> 
+				<small class="mid_left_align margin_left_right">Total Pack for all action: {{ frappe.utils.fmt_money(doc.volume_sales, currency = '', precision = 0) }}</small>
+			</td>
+			<td  class="text-left" style="padding: 0px !important;width: 33%">
+				<small class="mid_left_align margin_left_right">Consommateur: {{ frappe.utils.fmt_money(doc.volume_sales, currency = '', precision = 0) }}</small>
+			</td>
+			{% if my_list|length > 2 %}
+				<td  class="text-left" style="padding: 0px !important;width: 33%"> 
+					<small class="mid_left_align margin_left_right">Consommateur Sampling: {{" "}}{{ frappe.utils.fmt_money(doc.revenue_sampling, currency = '', precision = 0) }}</small>
+				</td>
+			{% endif %}
+		</tr>
+		{% endif %}
+			
+		</tbody>
+		</table>
+	</td>
+	</tr>
+
+	{% if doc.selling == 1 %}
+	{% set products = frappe.db.sql("SELECT item, qty, cout FROM `tabSales Details` WHERE parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1) %}
+	{% set montant = 0 %}
+	{% for p in products%}
+		{% set mt = p.qty * p.cout %}
+		{% set montant = montant + mt %}
+	{% endfor %}
+	{% set cout_global = montant / doc.volume_sales|float %}
+	<tr>
+	<td  class="text-left" style="padding: 0px !important;">
+		<small class="mid_left_align margin_left_right">ACCOUNT CM29</small>
+	</td>
+	<td colspan="2" style="padding: 0px !important;">
+		<table class="table table-bordered" style="margin: 0px !important; padding: 0px !important;">
+			<tbody>
+				<tr>
+					<td class="text-left" style="padding: 0px !important; width: 25%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>DESIGNATIONS</b></small>
+					</td>
+					<td class="text-left" style="padding: 0px !important; width: 16.67%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>QTES</b></small>
+					</td>
+					<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>P.U.</b></small>
+					</td>
+					<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>TOTAL</b></small>
+					</td>
+					<td class="text-left" style="padding: 0px !important; width: 25%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>OBSERVATIONS</b></small>
+					</td>
+				</tr>
+				<tr>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_left_align margin_left_right">SALES</small>
+					</td>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+						<small class="rigth_center_align margin_left_right">{{frappe.utils.fmt_money(doc.volume_sales, currency = '', precision = 0)}}</small>
+					</td>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+						<small class="rigth_center_align margin_left_right">{{(doc.revenue_sales | float/doc.volume_sales | float)|flt(2)}}</small>
+					</td>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+						<small class="rigth_center_align margin_left_right">{{frappe.utils.fmt_money(doc.revenue_sales, currency = '', precision = 0)}}</small>
+					</td>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+					</td>
+				</tr>
+				<tr>
+					<td oolsmall="3" class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_left_align margin_left_right">TOTAL</small>
+					</td>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;" colspan = "3">
+						<small class="rigth_center_align margin_left_right">{{frappe.utils.fmt_money(doc.revenue_sales, currency = '', precision = 0) }}</small>
+					</td>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</td>
+	<tr>
+	{% endif %}
+
+	<tr  style="min-height: 30px;">
+	<td  class="text-left" style="padding: 0px !important;" colspan="2">
+		<div class="row-no-margin border parent separator"></div>
+	</td>
+	</tr>
+
+	<tr>
+	<td  class="text-left" style="padding: 0px !important;">
+		<small class="mid_left_align margin_left_right">BUDGET</small>
+	</td>
+	<td colsmall="2" style="padding: 0px !important;">
+		<table class="table table-bordered" style="margin: 0px !important; padding: 0px !important;">
+			<tbody>
+				<tr>
+					<td class="text-left" style="padding: 0px !important; width: 25%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>DESIGNATIONS</b></small>
+					</td>
+					<td class="text-left" style="padding: 0px !important; width: 16.67%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>QTES</b></small>
+					</td>
+					<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>P.U.</b></small>
+					</td>
+					<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>TOTAL</b></small>
+					</td>
+					<td class="text-left" style="padding: 0px !important; width: 25%;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_center_align margin_left_right"><b>OBSERVATIONS</b></small>
+					</td>
+				</tr>
+				{% set lines = frappe.db.sql("SELECT `type`,SUM(qte) AS qte, SUM(total) AS total,observation,`order`, SUM(total) / SUM(qte) AS pu FROM `tabBudget Details` WHERE parent = " ~ "'" ~ doc.name ~ "' GROUP BY `type`, observation, `order` ORDER BY `order`", as_dict = 1)  %}
+				{% set total = 0 %}
+				{% set orders = [] %}
+				{% set exists = [] %}
+				{% for l in lines%}
+				{% if not l.order[0] in orders %}
+					<tr>
+					<td  class="text-left" style="padding: 0px !important;" colspan="5">
+						{% set i = exists|sum() %}
+						<small class="mid_left_align margin_left_right"><b>{{mecanics[i][0]|capitalize}}</b></small>
+					</td>
+					</tr>
+					{% set _ = exists.append(1) %}
+				{% endif %}
+				{% set _ = orders.append(l.order[0]) %}
+					<tr>
+						<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+							<small class="mid_left_align margin_left_right">{{l.type}}</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+							<small class="rigth_center_align margin_left_right">{{frappe.utils.fmt_money(l.qte, currency = '', precision = 0)}}</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+							<small class="rigth_center_align margin_left_right">{{ l.pu|flt(2)}}</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+							<small class="rigth_center_align margin_left_right">{{ frappe.utils.fmt_money(l.total, currency = '', precision = 2) }}</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+							<small class="mid_left_align margin_left_right">{{l.observation if l.observation is not none else ' '}}</small>
+						</td>
+					</tr>
+					{% set total = total + l.total %}
+				{% endfor %}
+				{% set obj = frappe.db.sql("SELECT SUM(total) AS total FROM `tabBudget Details` WHERE parent = " ~ "'" ~ doc.name ~ "'", as_dict = 1)  %}
+				<tr> 
+					<td oolsmall="3" class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+						<small class="mid_left_align margin_left_right">TOTAL</small>
+					</td>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;" colspan = "3">
+						<small class="rigth_center_align margin_left_right">{{ frappe.utils.fmt_money(obj[0].total, currency = '', precision = 2) }}</small>
+					</td>
+					<td class="text-left" style="padding: 0px !important;margin: 0px !important; padding: 0px !important;">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</td>
+	<tr>	
+
+	<tr  style="min-height: 30px;">
+	<td  class="text-left" style="padding: 0px !important;" colspan="2">
+		<div class="row-no-margin border parent separator"></div>
+	</td>
+	</tr>
+
+	<tr>
+		<td colspan="3" style="padding: 0px !important;">
+			<table class="table table-bordered" style="margin: 0px !important; padding: 0px !important;width:100%">
+				<tbody>
+					<tr>
+						<td class="text-left" style="padding: 0px !important; width: 16.67%;margin: 0px !important; padding: 0px !important;">
+							<small class="mid_center_align margin_left_right">PROJECT LEADER</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.67%;margin: 0px !important; padding: 0px !important;">
+							<small class="mid_center_align margin_left_right">BM</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+							<small class="mid_center_align margin_left_right">HOD</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+							<small class="mid_center_align margin_left_right">CFO</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+							<small class="mid_center_align margin_left_right">CEO</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.67%;margin: 0px !important; padding: 0px !important;">
+							<small class="mid_center_align margin_left_right">AUDIT</small>
+						</td>
+					</tr>
+					<tr style="height: 70px;">
+						<td class="text-left" style="padding: 0px !important; width: 16.67%;margin: 0px !important; padding: 0px !important;">
+							<small style="height: 70px;" class="mid_center_align margin_left_right">{{doc.nom_complet}}</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.67%;margin: 0px !important; padding: 0px !important;">
+							<div class="mid_center_align margin_left_right" style="height: 70px;">
+								{% if not doc.bm %}
+									<div style="height: 35px; " class="mid_center_align margin_left_right">
+										<label class="radio-inline" style="border: 10px solid transparent;">
+											<input type="radio" name="validationOption" value="validate"> Validate
+										</label>
+										<label class="radio-inline" style="border: 10px solid transparent;">
+											<input type="radio" name="validationOption" value="cancel"> Cancel
+										</label>
+									</div>
+									<div style="height: 35px; " class="mid_center_align margin_left_right">
+										<button type="button" class="btn btn-primary" onclick="validateForm('{{frappe.session.user}}')">Ok</button>
+									</div>
+								{% else %}
+									{{ doc.bm }}
+								{% endif %}
+							</div>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+							<small style="height: 70px;" class="mid_center_align margin_left_right">HOD</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+							<small style="height: 70px;" class="mid_center_align margin_left_right">CFO</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.66%;margin: 0px !important; padding: 0px !important;">
+							<small style="height: 70px;" class="mid_center_align margin_left_right">CEO</small>
+						</td>
+						<td class="text-left" style="padding: 0px !important; width: 16.67%;margin: 0px !important; padding: 0px !important;">
+							<small style="height: 70px;" class="mid_center_align margin_left_right">AUDIT</small>
+						</td>
+					</tr>
+				</tbody>
+			</table>			
+		</td>
+	</tr>
+
+	</tbody>
+	</table>
+
+{% endblock %}
