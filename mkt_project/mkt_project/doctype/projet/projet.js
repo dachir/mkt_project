@@ -161,7 +161,7 @@ frappe.ui.form.on('Projet', {
 					//row.item = e.item;
 					row.description = e.description;
 					row.qte = e.qty;
-					row.pu = e.cout;
+					row.pu = e.cout * frm.doc.exchange_rate;
 					row.total = row.qte * row.pu * e.conso_litre;
 					row.type = 'Logistique';
 					row.order = 'A4';
