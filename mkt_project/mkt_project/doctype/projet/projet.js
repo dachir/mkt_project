@@ -143,7 +143,7 @@ frappe.ui.form.on('Projet', {
 					row.qte = frm.doc.volume_sales;
 					row.pu = e.prix_achat;
 					row.total = row.qte * row.pu;
-					row.type = 'Achat';
+					row.type = 'Achat CM29';
 					row.order = 'A2';
 				});
 				frm.doc.sales_materials_details.forEach(e => {
