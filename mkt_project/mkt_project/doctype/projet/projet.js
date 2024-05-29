@@ -160,9 +160,9 @@ frappe.ui.form.on('Projet', {
 					var row = frm.add_child('details');
 					//row.item = e.item;
 					row.description = e.description;
-					row.qte = e.qty * e.conso_litre/100;
+					row.qte = e.qty * e.conso_litre/100 * 1.2;
 					row.pu = e.cout * frm.doc.exchange_rate;
-					row.total = row.qte * row.pu * 1.2;
+					row.total = row.qte * row.pu;
 					row.type = 'Logistique';
 					row.order = 'A4';
 				});
