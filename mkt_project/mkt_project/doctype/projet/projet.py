@@ -53,7 +53,7 @@ def get_sage_selling_price(site,item):
 	end_of_year = str(getdate().year) + "-12-31"
 	conn = pymssql.connect("172.16.0.40:49954", "erpnext", "Xn5uFLyR", "dc7x3v12")
 	cursor = conn.cursor(as_dict=True)
-	cursor.execute("SELECT PLICRI1_0, PRI_0 AS cout_pc FROM LIVE.SPRICLIST INNER JOIN LIVE.ITMMASTER ON ITMREF_0 = PLICRI1_0 WHERE PLI_0 = 'T01' AND PLICRI2_0 = %s AND PLIENDDAT_0 = %s  AND PLICRI1_0 = %s", (site, end_of_year, item))
+	cursor.execute("SELECT PLICRI1_0, PRI_0 / PCUSTUCOE_0 * PCUSTUCOE_1 AS cout_pc FROM LIVE.SPRICLIST INNER JOIN LIVE.ITMMASTER ON ITMREF_0 = PLICRI1_0 WHERE PLI_0 = 'T01' AND PLICRI2_0 = %s AND PLIENDDAT_0 = %s  AND PLICRI1_0 = %s", (site, end_of_year, item))
 	row = cursor.fetchone()
 	conn.close()
 	if row:

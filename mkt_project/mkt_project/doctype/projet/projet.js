@@ -702,7 +702,7 @@ const clear_sampling = (frm) =>{
 
 
 frappe.ui.form.on('Sales Details', {
-    item(frm, cdt, cdn) {
+	item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
 		
 		if(row.item_group != "Package") {
@@ -723,13 +723,13 @@ frappe.ui.form.on('Sale Materials Details', {
 		frm.refresh_field("sales_materials_details");
     },
 });
-frappe.ui.form.on('Logistic Details', {
+/*frappe.ui.form.on('Logistic Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
 		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
 		frm.refresh_field("logistics");
     },
-});
+});*/
 frappe.ui.form.on('Tasting Details', {
     item(frm, cdt, cdn) {
 		var row = locals[cdt][cdn]; 
