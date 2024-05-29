@@ -162,7 +162,7 @@ frappe.ui.form.on('Projet', {
 					row.description = e.description;
 					row.qte = e.qty * e.conso_litre/100;
 					row.pu = e.cout * frm.doc.exchange_rate;
-					row.total = row.qte * row.pu ;
+					row.total = row.qte * row.pu * 1.2;
 					row.type = 'Logistique';
 					row.order = 'A4';
 				});
