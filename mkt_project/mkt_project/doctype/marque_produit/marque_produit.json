@@ -1,0 +1,38 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-06-20 10:47:06.925303",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "marque",
+  "produit"
+ ],
+ "fields": [
+  {
+   "fieldname": "marque",
+   "fieldtype": "Link",
+   "label": "Marque",
+   "options": "Brand"
+  },
+  {
+   "fieldname": "produit",
+   "fieldtype": "Link",
+   "label": "Produit",
+   "options": "Item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-06-20 10:47:06.925303",
+ "modified_by": "Administrator",
+ "module": "Mkt Project",
+ "name": "Marque Produit",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -113,7 +113,7 @@ frappe.ui.form.on('Projet', {
 			function () {
 				frm.clear_table("details")
 				frm.refresh_field('details');
-				frm.doc.sellings.forEach(e => {
+				/*frm.doc.sellings.forEach(e => {
 					var row = frm.add_child('details');
 					//row.item = e.item;
 					row.description = "REVENUE";
@@ -135,7 +135,7 @@ frappe.ui.form.on('Projet', {
 						row.type = 'Sponsoring';
 						row.order = 'A1';
 					});
-				}
+				}*/
 				frm.doc.sellings.forEach(e => {
 					var row = frm.add_child('details');
 					//row.item = e.item;

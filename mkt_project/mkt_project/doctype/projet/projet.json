@@ -36,6 +36,7 @@
   "column_break_2",
   "titre",
   "objective",
+  "marque_produit",
   "marque_principale",
   "marques",
   "produits",
@@ -350,7 +351,8 @@
   {
    "fieldname": "marques",
    "fieldtype": "Table MultiSelect",
-   "label": "Marques Secondaires",
+   "hidden": 1,
+   "label": "Marques",
    "options": "Marque Details"
   },
   {
@@ -520,9 +522,9 @@
   {
    "fieldname": "marque_principale",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Marque Principale",
-   "options": "Brand",
-   "reqd": 1
+   "options": "Brand"
   },
   {
    "fieldname": "societe",
@@ -712,6 +714,7 @@
   {
    "fieldname": "produits",
    "fieldtype": "Table MultiSelect",
+   "hidden": 1,
    "label": "Produits",
    "options": "Item Details"
   },
@@ -850,6 +853,13 @@
    "fieldname": "audit",
    "fieldtype": "Data",
    "label": "Audit"
+  },
+  {
+   "fieldname": "marque_produit",
+   "fieldtype": "Table",
+   "label": "Marque Produit",
+   "options": "Marque Produit",
+   "reqd": 1
   }
  ],
  "has_web_view": 1,
@@ -873,7 +883,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2024-05-04 13:39:51.225323",
+ "modified": "2024-06-20 10:51:33.892793",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
