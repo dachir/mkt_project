@@ -135,7 +135,7 @@ frappe.ui.form.on('Projet', {
 						row.type = 'Sponsoring';
 						row.order = 'A1';
 					});
-				}*/
+				}
 				frm.doc.sellings.forEach(e => {
 					var row = frm.add_child('details');
 					//row.item = e.item;
@@ -145,7 +145,7 @@ frappe.ui.form.on('Projet', {
 					row.total = row.qte * row.pu;
 					row.type = 'Achat CM29';
 					row.order = 'A2';
-				});
+				});*/
 				frm.doc.sales_materials_details.forEach(e => {
 					var row = frm.add_child('details');
 					//row.item = e.item;
