@@ -706,8 +706,14 @@ frappe.ui.form.on('Sales Details', {
 		var row = locals[cdt][cdn]; 
 		
 		if(row.item_group != "Package") {
-			cur_frm.events.get_sage_cm29_price(frm,row.item).then((result)=> row.prix_achat = result);
-			cur_frm.events.get_sage_selling_price(frm,row.item).then((result)=> row.cout = result);
+			if(frm.doc.branch == "Kinshasa"){
+				cur_frm.events.get_sage_cm29_price(frm,row.item).then((result)=> row.prix_achat = result);
+				cur_frm.events.get_sage_selling_price(frm,row.item).then((result)=> row.cout = result);
+			}
+			else{
+				cur_frm.events.get_sage_selling_price(frm,row.item).then((result)=> {row.prix_achat = result; row.cout = result});
+			}
+			
 		}
 		else {
 			cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.prix_achat = result.prix_achat);
