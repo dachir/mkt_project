@@ -15,7 +15,7 @@ from erpnext.stock.get_item_details import (
 import pymssql
 
 class Projet(WebsiteGenerator):
-	def before_save(self):
+	def on_validate(self):
 		if len(self.marque_produit) > 0:
 			self.marque_principale = self.marque_produit[0].marque
 

@@ -522,7 +522,6 @@
   {
    "fieldname": "marque_principale",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Marque Principale",
    "options": "Brand"
   },
@@ -883,7 +882,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2024-06-20 10:51:33.892793",
+ "modified": "2024-07-10 10:52:04.618324",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
