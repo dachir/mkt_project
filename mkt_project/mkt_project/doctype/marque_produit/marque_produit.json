@@ -13,20 +13,24 @@
   {
    "fieldname": "marque",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Marque",
-   "options": "Brand"
+   "options": "Brand",
+   "reqd": 1
   },
   {
    "fieldname": "produit",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Produit",
-   "options": "Item"
+   "options": "Item",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-06-20 10:47:06.925303",
+ "modified": "2024-07-11 09:35:37.755752",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Marque Produit",

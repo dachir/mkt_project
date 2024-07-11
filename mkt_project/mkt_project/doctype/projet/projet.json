@@ -523,7 +523,8 @@
    "fieldname": "marque_principale",
    "fieldtype": "Link",
    "label": "Marque Principale",
-   "options": "Brand"
+   "options": "Brand",
+   "reqd": 1
   },
   {
    "fieldname": "societe",
@@ -882,7 +883,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2024-07-10 11:10:04.448912",
+ "modified": "2024-07-11 09:36:21.320951",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
