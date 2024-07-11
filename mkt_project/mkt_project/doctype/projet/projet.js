@@ -539,6 +539,14 @@ frappe.ui.form.on('Sales Details', {
 	}
 });
 
+frappe.ui.form.on('Marque Produit', {
+	marque_produit_add(frm, cdt, cdn) {
+		var row = locals[cdt][cdn]; 
+		row.marque = frm.doc.marque_principale;
+		frm.refresh_field("marque_produit");
+	}
+});
+
 /*frappe.ui.form.on("Projet","onload", function(frm, cdt, cdn) { 
 	on_activite_change(frm);
 
