@@ -13,8 +13,12 @@ from erpnext.stock.get_item_details import (
 	get_reserved_qty_for_so,
 )
 import pymssql
+from bpm.utils.data_layer import share_doc
 
 class Projet(WebsiteGenerator):
+
+	def before_save(self):
+		share_doc(self)
 
 	def before_submit(self):
 		self.route = self.name
