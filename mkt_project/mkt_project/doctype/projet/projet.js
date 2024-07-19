@@ -124,6 +124,17 @@ frappe.ui.form.on('Projet', {
 					row.order = 'A';
 					row.style = 'color: red; font-weight: bold; font-style: italic;';
 				});
+				
+				frm.doc.sellings.forEach(e => {
+					var row = frm.add_child('details');
+					//row.item = e.item;
+					row.description = e.description;
+					row.qte = frm.doc.volume_sales;
+					row.pu = e.prix_achat;
+					row.total = row.qte * row.pu;
+					row.type = 'Achat CM29';
+					row.order = 'A2';
+				});*/
 				if(frm.doc.frais_sponsoring > 0) {
 					frm.doc.sellings.forEach(e => {
 						var row = frm.add_child('details');
@@ -136,16 +147,6 @@ frappe.ui.form.on('Projet', {
 						row.order = 'A1';
 					});
 				}
-				frm.doc.sellings.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = frm.doc.volume_sales;
-					row.pu = e.prix_achat;
-					row.total = row.qte * row.pu;
-					row.type = 'Achat CM29';
-					row.order = 'A2';
-				});*/
 				frm.doc.sales_materials_details.forEach(e => {
 					var row = frm.add_child('details');
 					//row.item = e.item;
