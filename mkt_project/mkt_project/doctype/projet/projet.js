@@ -178,14 +178,16 @@ frappe.ui.form.on('Projet', {
 					row.type = 'Staff Salaire';
 					row.order = 'A5';
 					//Transport
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					row.description = e.type + ' TRANSPORT';
-					row.qte = e.nombre * frm.doc.duree_vente;
-					row.pu = e.transport_jour ;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Transport';
-					row.order = 'A6';
+					if (e.transport_jour > 0){
+						var row = frm.add_child('details');
+						row.document_type = "Promoteur Salaire";
+						row.description = e.type + ' TRANSPORT';
+						row.qte = e.nombre * frm.doc.duree_vente;
+						row.pu = e.transport_jour ;
+						row.total = row.qte * row.pu;
+						row.type = 'Staff Transport';
+						row.order = 'A6';
+					}
 				});
 
 				frm.doc.samplings.forEach(e => {
@@ -219,14 +221,16 @@ frappe.ui.form.on('Projet', {
 					row.type = 'Staff Salaire';
 					row.order = 'B2';
 					//Transport
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					row.description = e.type + ' TRANSPORT';
-					row.qte = e.nombre * frm.doc.duree_sampling;
-					row.pu = e.transport_jour;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Transport';
-					row.order = 'B3';
+					if (e.transport_jour > 0){
+						var row = frm.add_child('details');
+						row.document_type = "Promoteur Salaire";
+						row.description = e.type + ' TRANSPORT';
+						row.qte = e.nombre * frm.doc.duree_sampling;
+						row.pu = e.transport_jour;
+						row.total = row.qte * row.pu;
+						row.type = 'Staff Transport';
+						row.order = 'B3';
+					}
 				});
 
 				frm.doc.tastings.forEach(e => {
@@ -253,12 +257,23 @@ frappe.ui.form.on('Projet', {
 					var row = frm.add_child('details');
 					row.document_type = "Promoteur Salaire";
 					//row.item = e.type;
-					row.description = e.type;
+					row.description = e.type + 'SALAIRE';
 					row.qte = e.nombre * frm.doc.duree_tasting;
-					row.pu = (e.transport_jour + e.salaire_jour) ;
+					row.pu =  e.salaire_jour ;
 					row.total = row.qte * row.pu;
-					row.type = 'Staff';
+					row.type = 'Staff Salaire';
 					row.order = 'C2';
+					//Transport
+					if (e.transport_jour > 0){
+						var row = frm.add_child('details');
+						row.document_type = "Promoteur Salaire";
+						row.description = e.type + ' TRANSPORT';
+						row.qte = e.nombre * frm.doc.duree_sampling;
+						row.pu = e.transport_jour;
+						row.total = row.qte * row.pu;
+						row.type = 'Staff Transport';
+						row.order = 'C3';
+					}
 				});
 
 				frm.doc.rh_survey.forEach(e => {
@@ -271,14 +286,16 @@ frappe.ui.form.on('Projet', {
 					row.type = 'Staff Salaire';
 					row.order = 'D01';
 
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					row.description = e.type + ' TRANSPORT';
-					row.qte = e.nombre * frm.doc.duree_survey;
-					row.pu = (e.transport_jour + e.salaire_jour) ;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Transport';
-					row.order = 'D02';
+					if (e.transport_jour > 0){
+						var row = frm.add_child('details');
+						row.document_type = "Promoteur Salaire";
+						row.description = e.type + ' TRANSPORT';
+						row.qte = e.nombre * frm.doc.duree_survey;
+						row.pu = (e.transport_jour + e.salaire_jour) ;
+						row.total = row.qte * row.pu;
+						row.type = 'Staff Transport';
+						row.order = 'D02';
+					}
 				});
 				frm.doc.survey_material_details.forEach(e => {
 					var row = frm.add_child('details');
@@ -311,15 +328,16 @@ frappe.ui.form.on('Projet', {
 					row.total = row.qte * row.pu;
 					row.type = 'Staff Salaire';
 					row.order = 'E1';
-
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					row.description = e.type + ' TRANSPORT';
-					row.qte = e.nombre * frm.doc.duree_tasting;
-					row.pu = e.transport_jour ;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Transport';
-					row.order = 'E1';
+					if (e.transport_jour > 0){
+						var row = frm.add_child('details');
+						row.document_type = "Promoteur Salaire";
+						row.description = e.type + ' TRANSPORT';
+						row.qte = e.nombre * frm.doc.duree_tasting;
+						row.pu = e.transport_jour ;
+						row.total = row.qte * row.pu;
+						row.type = 'Staff Transport';
+						row.order = 'E2';
+					}
 				});
 
 				frm.refresh_field('details');
