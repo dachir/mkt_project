@@ -90,8 +90,10 @@ frappe.ui.form.on('Projet', {
 				});
 				volume *= frm.doc.duree_sampling;
 
-				frm.doc.audience_sampling = volume;
-				frm.doc.volume_sampling = volume;
+				//frm.doc.audience_sampling = volume;
+				//frm.doc.volume_sampling = volume;
+				frm.set_value("audience_sampling", volume);
+				frm.set_value("volume_sampling", volume);
 
 				volume = 0;
 				frm.doc.rh_survey.forEach(e => {
