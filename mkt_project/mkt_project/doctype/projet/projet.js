@@ -56,6 +56,7 @@ frappe.ui.form.on('Projet', {
 				row.zone = e.zone;
 				row.distance = e.distance;
 			});
+			frm.refresh_field('zones');
 		});
 	},
 	code_adresse: function(frm) {
