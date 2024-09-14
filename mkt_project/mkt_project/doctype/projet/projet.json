@@ -913,6 +913,7 @@
    "options": "Promotion Site"
   },
   {
+   "fetch_from": "agence.total",
    "fieldname": "total",
    "fieldtype": "Float",
    "label": "Total (km)",
@@ -940,7 +941,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2024-09-14 09:14:58.326904",
+ "modified": "2024-09-14 10:52:06.323676",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
