@@ -63,11 +63,11 @@ frappe.ui.form.on('Projet', {
 	code_adresse: function(frm) {
 		cur_frm.events.get_address(frm).then((result)=> {
 			frm.doc.adresse = result.address_line1 + "\n";
-			if (result.address_line2) frm.doc.adresse = result.address_line2 + "\n";
-			if (result.city) frm.doc.adresse = result.city + "\n";
-			if (result.country) frm.doc.adresse = result.country + "\n";
-			if (result.email_id) frm.doc.adresse = result.email_id + "\n";
-			if (result.phone) frm.doc.adresse = result.phone;
+			if (result.address_line2) frm.doc.adresse += result.address_line2 + "\n";
+			if (result.city) frm.doc.adresse += result.city + "\n";
+			if (result.country) frm.doc.adresse += result.country + "\n";
+			if (result.email_id) frm.doc.adresse += result.email_id + "\n";
+			if (result.phone) frm.doc.adresse += result.phone;
 
 			frm.refresh_field('adresse');
 		});
