@@ -910,7 +910,7 @@
   {
    "fieldname": "zones",
    "fieldtype": "Table",
-   "options": "Promotion Site"
+   "options": "Project Zone"
   },
   {
    "fetch_from": "agence.total",
@@ -941,7 +941,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2024-09-14 10:52:06.323676",
+ "modified": "2024-09-14 11:58:46.940579",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
