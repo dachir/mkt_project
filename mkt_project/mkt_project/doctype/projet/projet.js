@@ -50,6 +50,7 @@ frappe.ui.form.on('Projet', {
 	},
 	agence: function(frm) {
 		cur_frm.events.get_agence_site(frm).then((result)=> {
+			frm.clear_table("zones");
 			result.forEach(e => {
 				var row = frm.add_child('zones');
 				row.commune = e.commune;
