@@ -48,7 +48,36 @@ frappe.ui.form.on('Projet', {
 			};
 		});
 	},
+	agence: function(frm) {
+		cur_frm.events.get_agence_site(frm).then((result)=> {
+			result.forEach(e => {
+				var row = frm.add_child('zones');
+				row.commune = e.commune;
+				row.zone = e.zone;
+				row.distance = e.distance;
+			});
+		});
+	},
+	code_adresse: function(frm) {
+		cur_frm.events.get_address(frm).then((result)=> {
+			frm.doc.adresse = result.address_line1 + "\n";
+			if (result.address_line2) frm.doc.adresse = result.address_line2 + "\n";
+			if (result.city) frm.doc.adresse = result.city + "\n";
+			if (result.country) frm.doc.adresse = result.country + "\n";
+			if (result.email_id) frm.doc.adresse = result.email_id + "\n";
+			if (result.phone) frm.doc.adresse = result.phone;
+
+			frm.refresh_field('adresse');
+		});
+	},
 	refresh: function(frm) {
+		frm.set_query('code_adresse', function(doc) {
+			return {
+				"filters": {
+					"name": ["LIKE", frm.doc.agence + "%"],
+				}
+			};
+		});
 		frm.add_custom_button(
 			__("Calcul Objectifs"),
 			function () {
@@ -497,6 +526,46 @@ frappe.ui.form.on('Projet', {
 				method: "get_sage_cm29_price",
 				args: {
 					"item": item,
+				},
+				callback: (r) => {
+					//frm.refresh();
+					if (r.message) resolve(r.message);
+					else resolve(0);
+				},
+				error: (err) => {
+					// Handle any errors here
+					reject(err);
+				},
+			});
+		});
+	},
+
+	get_agence_site: function(frm) {
+		return new Promise((resolve, reject) => {
+			frm.call({
+				method: "get_agence_site",
+				args: {
+					"agence": frm.doc.agence,
+				},
+				callback: (r) => {
+					//frm.refresh();
+					if (r.message) resolve(r.message);
+					else resolve(0);
+				},
+				error: (err) => {
+					// Handle any errors here
+					reject(err);
+				},
+			});
+		});
+	},
+
+	get_address: function(frm) {
+		return new Promise((resolve, reject) => {
+			frm.call({
+				method: "get_address",
+				args: {
+					"address": frm.doc.code_adresse,
 				},
 				callback: (r) => {
 					//frm.refresh();

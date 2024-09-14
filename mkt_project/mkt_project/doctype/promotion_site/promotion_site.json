@@ -8,7 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "commune",
-  "site",
+  "zone",
   "distance"
  ],
  "fields": [
@@ -21,18 +21,18 @@
   {
    "fieldname": "distance",
    "fieldtype": "Float",
-   "label": "Distance (km)"
+   "label": "Aller-Retour (km)"
   },
   {
-   "fieldname": "site",
+   "fieldname": "zone",
    "fieldtype": "Data",
-   "label": "Site"
+   "label": "Zone de Couverture"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-30 17:43:09.597240",
+ "modified": "2024-09-12 11:49:41.933715",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Promotion Site",

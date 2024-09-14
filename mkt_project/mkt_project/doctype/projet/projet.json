@@ -143,7 +143,16 @@
   "media_tab",
   "visibilities",
   "rh_media",
-  "amended_from"
+  "amended_from",
+  "protocole_daccord_tab",
+  "sujet",
+  "description_protocole",
+  "total",
+  "column_break_kkwjq",
+  "code_adresse",
+  "adresse",
+  "zones_de_couverture_section",
+  "zones"
  ],
  "fields": [
   {
@@ -860,6 +869,54 @@
    "label": "Marque Produit",
    "options": "Marque Produit",
    "reqd": 1
+  },
+  {
+   "fieldname": "protocole_daccord_tab",
+   "fieldtype": "Tab Break",
+   "label": "Protocole d'accord"
+  },
+  {
+   "fieldname": "sujet",
+   "fieldtype": "Data",
+   "label": "Sujet"
+  },
+  {
+   "fieldname": "description_protocole",
+   "fieldtype": "Data",
+   "label": "Description Protocole"
+  },
+  {
+   "fieldname": "column_break_kkwjq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "agence",
+   "fieldname": "code_adresse",
+   "fieldtype": "Link",
+   "label": "Code Adresse",
+   "options": "Address"
+  },
+  {
+   "fieldname": "adresse",
+   "fieldtype": "Small Text",
+   "label": "Adresse ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "zones_de_couverture_section",
+   "fieldtype": "Section Break",
+   "label": "Zones de couverture"
+  },
+  {
+   "fieldname": "zones",
+   "fieldtype": "Table",
+   "options": "Promotion Site"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Float",
+   "label": "Total (km)",
+   "read_only": 1
   }
  ],
  "has_web_view": 1,
@@ -883,7 +940,7 @@
    "link_fieldname": "projet"
   }
  ],
- "modified": "2024-07-11 09:36:21.320951",
+ "modified": "2024-09-14 09:14:58.326904",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",

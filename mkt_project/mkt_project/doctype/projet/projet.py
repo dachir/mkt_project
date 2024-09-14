@@ -112,6 +112,33 @@ def get_package_cost(site,item):
 
 	return result[0] if len(result) > 0 else 0
 
+
+@frappe.whitelist()
+def get_agence_site(agence):
+
+	result =  frappe.db.sql(
+		"""
+		SELECT *
+		FROM `tabPromotion Site`
+		WHERE parent = %s 
+		""", (agence), as_dict = 1
+	)
+
+	return result
+
+@frappe.whitelist()
+def get_address(address):
+
+	result =  frappe.db.sql(
+		"""
+		SELECT *
+		FROM `tabAddress`
+		WHERE name = %s 
+		""", (address), as_dict = 1
+	)
+
+	return result[0] if len(result) > 0 else 0
+
 #@frappe.whitelist()
 #def get_label(item):
 	#doc = frappe.get_doc("")

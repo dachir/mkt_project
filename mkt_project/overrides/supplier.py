@@ -3,7 +3,8 @@ from erpnext.buying.doctype.supplier.supplier import Supplier
 
 class CustomSupplier(Supplier):
 
-    def before_save(self):
+    def on_save(self):
+        pass
 
         liste = frappe.db.sql(
             """
