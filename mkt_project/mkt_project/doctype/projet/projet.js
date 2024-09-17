@@ -18,7 +18,7 @@ const on_item_row_change = (item,company,cout) =>{
 }
 
 frappe.ui.form.on('Projet', {
-	setup: function(frm) {
+	setup: function(frm) {		
 		frm.set_query("price_list", function(frm) {
 			return {
 				filters: {
@@ -48,7 +48,7 @@ frappe.ui.form.on('Projet', {
 			};
 		});
 	},
-	agence: function(frm) {
+	/*agence: function(frm) {
 		cur_frm.events.get_agence_site(frm).then((result)=> {
 			frm.clear_table("zones");
 			result.forEach(e => {
@@ -59,7 +59,7 @@ frappe.ui.form.on('Projet', {
 			});
 			frm.refresh_field('zones');
 		});
-	},
+	},*/
 	code_adresse: function(frm) {
 		cur_frm.events.get_address(frm).then((result)=> {
 			frm.doc.adresse = result.address_line1 + "\n";
@@ -73,6 +73,62 @@ frappe.ui.form.on('Projet', {
 		});
 	},
 	refresh: function(frm) {
+		frm.add_custom_button(__("Zones de couverture"),
+			function () {
+				var fields_dict = [];
+				fields_dict.push({
+					label: 'Zones',
+					fieldname: 'zones',
+					fieldtype: 'Table',
+					data: [],
+					fields: [
+						{
+							label: 'Commune',
+							fieldname: 'commune',
+							fieldtype: 'Data',
+							in_list_view: 1,
+							fieldwidth: '4',
+							read_only: 1,
+						},
+						{
+							label: 'Zone',
+							fieldname: 'zone',
+							fieldtype: 'Data',
+							fieldwidth: '4',
+							in_list_view: 1,
+							read_only: 1,
+						},
+						{
+							label: 'Distance',
+							fieldname: 'distance',
+							fieldtype: 'Float',
+							fieldwidth: '2',
+							in_list_view: 1,
+							read_only: 1,
+						},
+					],
+				},);
+				
+				
+				let d = new frappe.ui.Dialog({
+					title: 'Zones de couverture',
+					fields: fields_dict,
+					primary_action_label: __('zones'),
+					primary_action(values) {
+						values.zones.forEach(x => {if (x.__checked) {
+							var row = frm.add_child('zones');
+							row.commune = x.commune ;
+							row.zone = x.zone;
+							row.distance = x.distance;
+						}});
+						cur_frm.refresh_field("zones");
+					}
+				});
+				d.show();
+				cur_frm.events.get_zones(cur_frm, d);
+			},
+		);
+
 		frm.set_query('code_adresse', function(doc) {
 			return {
 				"filters": {
@@ -608,6 +664,26 @@ frappe.ui.form.on('Projet', {
 	},
 	devise_vente: function (frm) {
 		frm.events.get_exchange_rate(frm);
+	},
+
+	get_zones: function(frm,dialog) {
+		frappe.call({
+			method: "mkt_project.mkt_project.doctype.projet.projet.get_agence_site",
+			args: { "agence": frm.doc.agence },
+			callback: function (r) {
+				// Your callback logic here
+				dialog.fields_dict.zones.df.data.length = 0;
+				r.message.forEach(d => {
+					dialog.fields_dict.zones.df.data.push({
+						commune: d.commune,
+						zone: d.zone,
+						distance: d.distance,
+					});
+				})
+				//cur_dialog.fields_dict.zones.df.data
+				dialog.fields_dict.zones.refresh()
+			},
+		});
 	},
 	
 });
