@@ -10,7 +10,6 @@ from erpnext.stock.get_item_details import (
 	get_bin_details,
 	get_conversion_factor,
 	get_default_cost_center,
-	get_reserved_qty_for_so,
 )
 import pymssql
 from bpm.utils.data_layer import share_doc
