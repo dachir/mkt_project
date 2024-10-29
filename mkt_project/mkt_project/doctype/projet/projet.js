@@ -380,7 +380,7 @@ frappe.ui.form.on('Projet', {
 						row.document_type = "Promoteur Salaire";
 						row.description = e.type + ' TRANSPORT';
 						row.qte = e.nombre * frm.doc.duree_survey;
-						row.pu = (e.transport_jour + e.salaire_jour) ;
+						row.pu = e.transport_jour; // (e.transport_jour + e.salaire_jour)
 						row.total = row.qte * row.pu;
 						row.type = 'Staff Transport';
 						row.order = 'D02';
