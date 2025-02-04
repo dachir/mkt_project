@@ -4,7 +4,7 @@
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
 from frappe.model.naming import getseries
-from frappe.utils import getdate
+from frappe.utils import (getdate, flt)
 from erpnext.utilities.product import get_price
 from erpnext.stock.get_item_details import (
 	get_bin_details,
@@ -35,15 +35,15 @@ def get_item_price(item, price_list):
 	return price_struct.price_list_rate
 
 @frappe.whitelist()
-def get_item_cost(item):
+def get_item_cost(site,item):
 	doc = frappe.db.sql(
 		"""
-		SELECT valuation_rate
-		FROM tabBin
-		WHERE item_code = %s AND warehouse = 'DEPOT308 - MES' AND actual_qty > 0
+		SELECT b.item_code, b.creation, b.valuation_rate, b.warehouse, w.branch
+		FROM tabBin b INNER JOIN tabWarehouse w ON w.name = b.warehouse
+		WHERE w.branch = %s AND b.item_code = %s AND b.actual_qty > 0 AND warehouse NOT LIKE '%ROOM%'
 		ORDER BY creation DESC
 		LIMIT 1
-		""",(item),as_dict = 1
+		""",(site,item),as_dict = 1
 	)
 	#doc = get_bin_details(item,"DEPOT308 - MES") #todo à changer, ne pas figer
 	return doc[0].valuation_rate if doc else 0
@@ -66,6 +66,23 @@ def get_sage_selling_price(site,item):
 		return row['cout_pc']
 	return 0
 
+@frappe.whitelist()
+def get_gross_selling_price(site,item):
+
+	item_price = frappe.db.sql(
+		"""
+		SELECT p.item_code, p.price_list_rate, p.uom, c1.conversion_factor t_to_ct_conversion, c2.uom AS piece_uom, c2.conversion_factor AS t_to_pc_conversion,
+		p.price_list_rate / c1.conversion_factor * c2.conversion_factor as pc_rate
+		FROM `tabItem Price` p INNER JOIN `tabUOM Conversion Detail` c1 ON c1.parent = p.item_code AND c1.uom = p.uom
+			INNER JOIN `tabUOM Conversion Detail` c2 ON c2.parent = p.item_code AND c2.uom = 'PC' 
+		WHERE p.price_list LIKE %s AND p.price_list LIKE '%%gross%%' AND p.item_code = %s
+		""",(f"%{site}%",item),as_dict = 1
+	)
+	if item_price:
+		return flt(item_price[0].pc_rate,4) or 0
+	else 0
+	
+
 
 @frappe.whitelist()
 def get_sage_item_cost(site,item):
@@ -84,6 +101,29 @@ def get_sage_item_cost(site,item):
 		return row['cout_pc']
 	return 0
 
+@frappe.whitelist()
+def get_cm29_price(item):
+	item_price = frappe.db.sql(
+		"""
+		SELECT DISTINCT i.item_code, t.price_list_rate, t.price_list_rate * (100-IFNULL(t.discount_percentage, 0))/100 AS rate
+		FROM tabItem i LEFT JOIN 
+		(   
+			SELECT DISTINCT ri.item_code, r.discount_percentage, p.price_list_rate, p.price_list
+			FROM `tabPricing Rule` r INNER JOIN `tabPricing Rule Item Code` ri ON ri.parent = r.name AND r.disable = 0 
+					AND (r.valid_from <= CURDATE()) AND (r.valid_upto IS NULL OR r.valid_upto >= CURDATE()) 
+				INNER JOIN `tabItem Price` p ON p.price_list = r.for_price_list AND p.item_code = ri.item_code 
+					AND (p.valid_from <= CURDATE()) AND (p.valid_upto IS NULL OR p.valid_upto >= CURDATE()) 
+				INNER JOIN `tabPrice List` l ON l.name = p.price_list AND l.enabled = 1
+				INNER JOIN tabCustomer c ON r.for_price_list = c.default_price_list
+			WHERE c.name = 'CM000029' 
+				AND ((r.applicable_for = 'Customer Group' AND c.customer_group = r.customer_group) XOR (r.applicable_for = 'Customer' AND c.name = r.customer))
+		) t ON t.item_code = i.item_code 
+		WHERE i.item_group = 'FG' AND NOT t.price_list_rate IS NULL AND i.item_code =%s
+		""",(item),as_dict = 1
+	)
+	if item_price:
+		return flt(item_price[0].rate,4) or 0
+	else 0
 
 @frappe.whitelist()
 def get_sage_cm29_price(item):
