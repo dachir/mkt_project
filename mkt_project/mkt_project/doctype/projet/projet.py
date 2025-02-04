@@ -80,7 +80,8 @@ def get_gross_selling_price(site,item):
 	)
 	if item_price:
 		return flt(item_price[0].pc_rate,4) or 0
-	else 0
+	else: 
+		return 0
 	
 
 
@@ -123,7 +124,8 @@ def get_cm29_price(item):
 	)
 	if item_price:
 		return flt(item_price[0].rate,4) or 0
-	else 0
+	else :
+		return 0
 
 @frappe.whitelist()
 def get_sage_cm29_price(item):
