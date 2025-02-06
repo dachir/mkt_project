@@ -86,6 +86,7 @@
   {
    "fieldname": "cout",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Cout",
    "options": "devise_cout",
    "read_only": 1
@@ -117,7 +118,7 @@
  ],
  "icon": "fa fa-sitemap",
  "links": [],
- "modified": "2024-05-24 09:43:32.072283",
+ "modified": "2025-02-05 09:17:32.732566",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Unite Vente",

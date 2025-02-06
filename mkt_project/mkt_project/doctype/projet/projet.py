@@ -38,8 +38,10 @@ def get_item_price(item, price_list):
 def get_item_cost(site,item):
 	doc = frappe.db.sql(
 		"""
-		SELECT b.item_code, b.creation, b.valuation_rate, b.warehouse, w.branch
+		SELECT b.item_code, b.creation, b.valuation_rate / ct.conversion_factor * pc.conversion_factor AS valuation_rate, b.warehouse, w.branch
 		FROM tabBin b INNER JOIN tabWarehouse w ON w.name = b.warehouse
+		    INNER JOIN `tabUOM Conversion Detail` ct ON ct.parent = b.item_code AND ct.uom = 'CT'
+		    INNER JOIN `tabUOM Conversion Detail` pc ON pc.parent = b.item_code AND pc.uom = 'PC'
 		WHERE w.branch = %s AND b.item_code = %s AND b.actual_qty > 0 AND warehouse NOT LIKE '%ROOM%'
 		ORDER BY creation DESC
 		LIMIT 1
@@ -106,19 +108,22 @@ def get_sage_item_cost(site,item):
 def get_cm29_price(item):
 	item_price = frappe.db.sql(
 		"""
-		SELECT DISTINCT i.item_code, t.price_list_rate, t.price_list_rate * (100-IFNULL(t.discount_percentage, 0))/100 AS rate
-		FROM tabItem i LEFT JOIN 
-		(   
-			SELECT DISTINCT ri.item_code, r.discount_percentage, p.price_list_rate, p.price_list
-			FROM `tabPricing Rule` r INNER JOIN `tabPricing Rule Item Code` ri ON ri.parent = r.name AND r.disable = 0 
-					AND (r.valid_from <= CURDATE()) AND (r.valid_upto IS NULL OR r.valid_upto >= CURDATE()) 
-				INNER JOIN `tabItem Price` p ON p.price_list = r.for_price_list AND p.item_code = ri.item_code 
-					AND (p.valid_from <= CURDATE()) AND (p.valid_upto IS NULL OR p.valid_upto >= CURDATE()) 
-				INNER JOIN `tabPrice List` l ON l.name = p.price_list AND l.enabled = 1
-				INNER JOIN tabCustomer c ON r.for_price_list = c.default_price_list
-			WHERE c.name = 'CM000029' 
-				AND ((r.applicable_for = 'Customer Group' AND c.customer_group = r.customer_group) XOR (r.applicable_for = 'Customer' AND c.name = r.customer))
-		) t ON t.item_code = i.item_code 
+		SELECT DISTINCT i.item_code, t.price_list_rate / ct.conversion_factor * pc.conversion_factor AS price_list_rate, 
+    		t.price_list_rate / ct.conversion_factor * pc.conversion_factor * (100-IFNULL(t.discount_percentage, 0))/100 AS rate
+		FROM tabItem i INNER JOIN `tabUOM Conversion Detail` ct ON ct.parent = i.name AND ct.uom = 'CT'
+		    INNER JOIN `tabUOM Conversion Detail` pc ON pc.parent = i.name AND pc.uom = 'PC'
+    		LEFT JOIN 
+    		(   
+    			SELECT DISTINCT ri.item_code, r.discount_percentage, p.price_list_rate, p.price_list
+    			FROM `tabPricing Rule` r INNER JOIN `tabPricing Rule Item Code` ri ON ri.parent = r.name AND r.disable = 0 
+    					AND (r.valid_from <= CURDATE()) AND (r.valid_upto IS NULL OR r.valid_upto >= CURDATE()) 
+    				INNER JOIN `tabItem Price` p ON p.price_list = r.for_price_list AND p.item_code = ri.item_code 
+    					AND (p.valid_from <= CURDATE()) AND (p.valid_upto IS NULL OR p.valid_upto >= CURDATE()) 
+    				INNER JOIN `tabPrice List` l ON l.name = p.price_list AND l.enabled = 1
+    				INNER JOIN tabCustomer c ON r.for_price_list = c.default_price_list
+    			WHERE c.name = 'CM000029' 
+    				AND ((r.applicable_for = 'Customer Group' AND c.customer_group = r.customer_group) XOR (r.applicable_for = 'Customer' AND c.name = r.customer))
+    		) t ON t.item_code = i.item_code 
 		WHERE i.item_group = 'FG' AND NOT t.price_list_rate IS NULL AND i.item_code =%s
 		""",(item),as_dict = 1
 	)
