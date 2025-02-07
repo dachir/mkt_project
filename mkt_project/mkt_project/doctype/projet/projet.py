@@ -38,11 +38,12 @@ def get_item_price(item, price_list):
 def get_item_cost(site,item):
 	doc = frappe.db.sql(
 		"""
-		SELECT b.item_code, b.creation, b.valuation_rate / ct.conversion_factor * pc.conversion_factor AS valuation_rate, b.warehouse, w.branch
-		FROM tabBin b INNER JOIN tabWarehouse w ON w.name = b.warehouse
-		    INNER JOIN `tabUOM Conversion Detail` ct ON ct.parent = b.item_code AND ct.uom = 'CT'
-		    INNER JOIN `tabUOM Conversion Detail` pc ON pc.parent = b.item_code AND pc.uom = 'PC'
-		WHERE w.branch = %s AND b.item_code = %s AND b.actual_qty > 0 AND warehouse NOT LIKE '%ROOM%'
+		SELECT b.item_code, b.creation, b.warehouse, w.branch, 
+		CASE WHEN i.item_group = 'FG' THEN b.valuation_rate / ct.conversion_factor * pc.conversion_factor ELSE b.valuation_rate END AS valuation_rate
+		FROM tabBin b INNER JOIN tabWarehouse w ON w.name = b.warehouse INNER JOIN tabItem i ON i.item_code = b.item_code
+			LEFT JOIN `tabUOM Conversion Detail` ct ON ct.parent = b.item_code AND ct.uom = 'CT'
+			LEFT JOIN `tabUOM Conversion Detail` pc ON pc.parent = b.item_code AND pc.uom = 'PC'
+		WHERE w.branch = %s AND b.item_code = %s AND b.actual_qty > 0 AND warehouse NOT LIKE '%%ROOM%%' AND warehouse NOT LIKE '%%TRANSIT%%'
 		ORDER BY creation DESC
 		LIMIT 1
 		""",(site,item),as_dict = 1
