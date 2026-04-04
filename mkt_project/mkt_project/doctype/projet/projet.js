@@ -752,6 +752,7 @@ frappe.ui.form.on('Budget Details', {
         };
 
         frappe.new_doc("BPM Marketing Operations");
+		
     }
 });
 
