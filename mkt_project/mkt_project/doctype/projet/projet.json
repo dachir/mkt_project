@@ -920,6 +920,7 @@
    "read_only": 1
   }
  ],
+ "grid_page_length": 50,
  "has_web_view": 1,
  "index_web_pages_for_search": 1,
  "is_published_field": "is_published",
@@ -939,9 +940,14 @@
    "group": "Action Terrain",
    "link_doctype": "Action",
    "link_fieldname": "projet"
+  },
+  {
+   "group": "Action Terrain",
+   "link_doctype": "BPM Marketing Operations",
+   "link_fieldname": "project"
   }
  ],
- "modified": "2024-09-14 11:58:46.940579",
+ "modified": "2026-04-04 13:13:01.878043",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Projet",
@@ -974,6 +980,7 @@
   }
  ],
  "route": "mkt_projets",
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

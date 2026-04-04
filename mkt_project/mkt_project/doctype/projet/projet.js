@@ -725,6 +725,34 @@ frappe.ui.form.on('Budget Details', {
 		}
 		frm.refresh_field("details");
 	},
+
+	depense(frm, cdt, cdn) {
+        const row = locals[cdt][cdn];
+
+        if (!frm.doc.name) {
+            frappe.msgprint(__("Veuillez enregistrer le projet avant de créer une dépense."));
+            return;
+        }
+
+        if (!row.name) {
+            frappe.msgprint(__("La ligne de budget doit être enregistrée avant de créer une dépense."));
+            return;
+        }
+
+        frappe.route_options = {
+            project: frm.doc.name,
+            budget_detail: row.name,
+            description: row.description || "",
+            amount: row.total || 0,
+            currency: "USD",
+            date: frappe.datetime.get_today(),
+            supplier: frm.doc.agence || "",
+			mois: frm.doc.mois,
+			branch: frm.doc.branch || "",
+        };
+
+        frappe.new_doc("BPM Marketing Operations");
+    }
 });
 
 frappe.ui.form.on('Sales Details', {

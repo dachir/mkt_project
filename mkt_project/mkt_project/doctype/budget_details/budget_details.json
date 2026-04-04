@@ -14,7 +14,8 @@
   "total",
   "observation",
   "type",
-  "order"
+  "order",
+  "depense"
  ],
  "fields": [
   {
@@ -72,17 +73,26 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Order"
+  },
+  {
+   "allow_on_submit": 1,
+   "depends_on": "eval:doc.docstatus == 1",
+   "fieldname": "depense",
+   "fieldtype": "Button",
+   "label": "Depense"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-18 06:11:59.118527",
+ "modified": "2026-04-04 12:59:31.252997",
  "modified_by": "Administrator",
  "module": "Mkt Project",
  "name": "Budget Details",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
