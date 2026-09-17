@@ -370,17 +370,17 @@ frappe.ui.form.on('Projet', {
 					row.document_type = "Promoteur Salaire";
 					row.description = e.type + ' SALAIRE';
 					row.qte = e.nombre * frm.doc.duree_survey;
-					row.pu = e.salaire_jour ;
+					row.pu = e.salaire_jour;
 					row.total = row.qte * row.pu;
 					row.type = 'Staff Salaire';
 					row.order = 'D01';
 
-					if (e.transport_jour > 0){
+					if (e.transport_jour > 0) {
 						var row = frm.add_child('details');
 						row.document_type = "Promoteur Salaire";
 						row.description = e.type + ' TRANSPORT';
 						row.qte = e.nombre * frm.doc.duree_survey;
-						row.pu = (e.transport_jour + e.salaire_jour) ;
+						row.pu = e.transport_jour;
 						row.total = row.qte * row.pu;
 						row.type = 'Staff Transport';
 						row.order = 'D02';
@@ -399,7 +399,6 @@ frappe.ui.form.on('Projet', {
 
 				frm.doc.visibilities.forEach(e => {
 					var row = frm.add_child('details');
-					//row.item = e.item;
 					row.description = e.description;
 					row.qte = e.qty * frm.doc.duration;
 					row.pu = e.cout;
@@ -412,17 +411,18 @@ frappe.ui.form.on('Projet', {
 					var row = frm.add_child('details');
 					row.document_type = "Promoteur Salaire";
 					row.description = e.type + ' SALAIRE';
-					row.qte = e.nombre * frm.doc.duree_tasting;
-					row.pu =  e.salaire_jour ;
+					row.qte = e.nombre * frm.doc.duration;
+					row.pu = e.salaire_jour;
 					row.total = row.qte * row.pu;
 					row.type = 'Staff Salaire';
 					row.order = 'E1';
-					if (e.transport_jour > 0){
+
+					if (e.transport_jour > 0) {
 						var row = frm.add_child('details');
 						row.document_type = "Promoteur Salaire";
 						row.description = e.type + ' TRANSPORT';
-						row.qte = e.nombre * frm.doc.duree_tasting;
-						row.pu = e.transport_jour ;
+						row.qte = e.nombre * frm.doc.duration;
+						row.pu = e.transport_jour;
 						row.total = row.qte * row.pu;
 						row.type = 'Staff Transport';
 						row.order = 'E2';
@@ -701,6 +701,90 @@ frappe.ui.form.on('Projet', {
     }
 });*/
 
+function create_marketing_bpm(frm, rows) {
+	const total = rows.reduce((sum, row) => sum + flt(row.total), 0);
+
+	frappe.new_doc("BPM Marketing Operations", {
+		project: frm.doc.name,
+		description: rows.map(row => row.description).filter(Boolean).join(" / "),
+		amount: total,
+		currency: "USD",
+		date: frappe.datetime.get_today(),
+		supplier: frm.doc.agence || "",
+		mois: frm.doc.mois || "",
+		branch: frm.doc.branch || ""
+	}, doc => rows.forEach(source => Object.assign(
+		frappe.model.add_child(doc, "budget_allocation"),
+		{
+			budget_detail: source.name,
+			description: source.description || "",
+			budget_amount: flt(source.total),
+			amount: flt(source.total)
+		}
+	)));
+}
+
+function setup_budget_expense_action(frm) {
+	if (frm.doc.docstatus !== 1) return;
+
+	const grid = frm.fields_dict.details.grid;
+
+	setTimeout(() => {
+		grid.toggle_checkboxes(true);
+
+		// Afficher le footer, mais masquer les actions standard
+		grid.wrapper.find(".grid-footer").removeClass("hidden").show();
+
+		grid.wrapper
+			.find(
+				".grid-add-row, " +
+				".grid-add-multiple-rows, " +
+				".grid-remove-rows, " +
+				".grid-remove-all-rows"
+			)
+			.hide();
+
+		const btn = grid.add_custom_button(__("Dépenses"), () => {
+			const rows = grid.get_selected_children();
+
+			if (rows.length) {
+				create_marketing_bpm(frm, rows);
+			}
+		});
+
+		btn
+			.removeClass("btn-secondary")
+			.addClass("btn-primary");
+
+		function refresh_action() {
+			const has_selection =
+				grid.get_selected_children().length > 0;
+
+			btn.toggle(has_selection);
+
+			// Frappe peut réafficher Delete après une sélection
+			grid.wrapper
+				.find(".grid-remove-rows, .grid-remove-all-rows")
+				.hide();
+		}
+
+		// État initial
+		refresh_action();
+
+		// Ligne individuelle ou Select All
+		grid.wrapper
+			.off("change.bpm_expense", ".grid-row-check")
+			.on("change.bpm_expense", ".grid-row-check", () => {
+				setTimeout(refresh_action, 0);
+			});
+
+	}, 0);
+}
+
+frappe.ui.form.on("Projet", {
+	refresh: setup_budget_expense_action
+});
+
 frappe.ui.form.on('Budget Details', {
 	
     qte(frm, cdt, cdn) {
@@ -727,32 +811,7 @@ frappe.ui.form.on('Budget Details', {
 	},
 
 	depense(frm, cdt, cdn) {
-        const row = locals[cdt][cdn];
-
-        if (!frm.doc.name) {
-            frappe.msgprint(__("Veuillez enregistrer le projet avant de créer une dépense."));
-            return;
-        }
-
-        if (!row.name) {
-            frappe.msgprint(__("La ligne de budget doit être enregistrée avant de créer une dépense."));
-            return;
-        }
-
-        frappe.route_options = {
-            project: frm.doc.name,
-            budget_detail: row.name,
-            description: row.description || "",
-            amount: row.total || 0,
-            currency: "USD",
-            date: frappe.datetime.get_today(),
-            supplier: frm.doc.agence || "",
-			mois: frm.doc.mois,
-			branch: frm.doc.branch || "",
-        };
-
-        frappe.new_doc("BPM Marketing Operations");
-		
+		create_marketing_bpm(frm, [locals[cdt][cdn]]);
     }
 });
 
