@@ -1,1099 +1,2168 @@
 // Copyright (c) 2023, Kossivi and contributors
+
 // For license information, please see license.txt
 
+
+
 const on_item_row_change = (item,company,cout) =>{
-	frappe.call({
-		//method: "mkt_project.mkt_project.doctype.projet.projet.get_item_price",
-		method: "erpnext.stock.get_item_details.get_valuation_rate",
-		args: {
-			item_code: item,
-			company: company,
-			warehouse: "Marketing Store - MCO",
-		},
-		callback: function (r) {
-			cout = r.message.valuation_rate;
-			frm.refresh();
-		}
-	});
+
+    frappe.call({
+
+        //method: "mkt_project.mkt_project.doctype.projet.projet.get_item_price",
+
+        method: "erpnext.stock.get_item_details.get_valuation_rate",
+
+        args: {
+
+            item_code: item,
+
+            company: company,
+
+            warehouse: "Marketing Store - MCO",
+
+        },
+
+        callback: function (r) {
+
+            cout = r.message.valuation_rate;
+
+            frm.refresh();
+
+        }
+
+    });
+
 }
+
+
 
 frappe.ui.form.on('Projet', {
-	setup: function(frm) {		
-		frm.set_query("price_list", function(frm) {
-			return {
-				filters: {
-					selling: 1,
-				}
-			};
-		});
-		frm.set_query("item","sellings", function() {
-			return {
-				"filters": {
-					"item_group": ["IN", ["FG", "Package"]],
-				}
-			};
-		});
-		frm.set_query("item","sales_materials_details", function() {
-			return {
-				"filters": {
-					"item_group": ["LIKE", "MRKT"],
-				}
-			};
-		});
-		frm.set_query("produits", function() {
-			return {
-				"filters": {
-					"name": ["LIKE", "FG%"],
-				}
-			};
-		});
-	},
-	/*agence: function(frm) {
-		cur_frm.events.get_agence_site(frm).then((result)=> {
-			frm.clear_table("zones");
-			result.forEach(e => {
-				var row = frm.add_child('zones');
-				row.commune = e.commune;
-				row.zone = e.zone;
-				row.distance = e.distance;
-			});
-			frm.refresh_field('zones');
-		});
-	},*/
-	code_adresse: function(frm) {
-		cur_frm.events.get_address(frm).then((result)=> {
-			frm.doc.adresse = result.address_line1 + "\n";
-			if (result.address_line2) frm.doc.adresse += result.address_line2 + "\n";
-			if (result.city) frm.doc.adresse += result.city + "\n";
-			if (result.country) frm.doc.adresse += result.country + "\n";
-			if (result.email_id) frm.doc.adresse += result.email_id + "\n";
-			if (result.phone) frm.doc.adresse += result.phone;
 
-			frm.refresh_field('adresse');
-		});
-	},
-	refresh: function(frm) {
-		frm.add_custom_button(__("Zones de couverture"),
-			function () {
-				var fields_dict = [];
-				fields_dict.push({
-					label: 'Zones',
-					fieldname: 'zones',
-					fieldtype: 'Table',
-					data: [],
-					fields: [
-						{
-							label: 'Commune',
-							fieldname: 'commune',
-							fieldtype: 'Data',
-							in_list_view: 1,
-							fieldwidth: '4',
-							read_only: 1,
-						},
-						{
-							label: 'Zone',
-							fieldname: 'zone',
-							fieldtype: 'Data',
-							fieldwidth: '4',
-							in_list_view: 1,
-							read_only: 1,
-						},
-						{
-							label: 'Distance',
-							fieldname: 'distance',
-							fieldtype: 'Float',
-							fieldwidth: '2',
-							in_list_view: 1,
-							read_only: 1,
-						},
-					],
-				},);
-				
-				
-				let d = new frappe.ui.Dialog({
-					title: 'Zones de couverture',
-					fields: fields_dict,
-					primary_action_label: __('zones'),
-					primary_action(values) {
-						values.zones.forEach(x => {if (x.__checked) {
-							var row = frm.add_child('zones');
-							row.commune = x.commune ;
-							row.zone = x.zone;
-							row.distance = x.distance;
-						}});
-						cur_frm.refresh_field("zones");
-					}
-				});
-				d.show();
-				cur_frm.events.get_zones(cur_frm, d);
-			},
-		);
+    setup: function(frm) {      
 
-		frm.set_query('code_adresse', function(doc) {
-			return {
-				"filters": {
-					"name": ["LIKE", frm.doc.agence + "%"],
-				}
-			};
-		});
-		frm.add_custom_button(
-			__("Calcul Objectifs"),
-			function () {
-				var volume = 0;
-				var revenue = 0;
-				frm.doc.rh_sales.forEach(e => {
-					volume += e.nombre * e.objectif_jour;
-				});
-				volume *= frm.doc.duree_vente;
-				frm.doc.sellings.forEach(e => {
-					revenue += e.prix_vente * frm.doc.exchange_rate * volume;
-				});
-				frm.set_value("frais_sponsoring", revenue * frm.doc.coefficient);
-				//frm.doc.audience_sales = volume;
-				//frm.doc.volume_sales = volume;
-				//frm.doc.revenue_sales = revenue;
-				frm.set_value("audience_sales", volume);
-				frm.set_value("volume_sales", volume);
-				frm.set_value("revenue_sales", revenue);
+        frm.set_query("price_list", function(frm) {
 
-				//affectations deu volume a chaque ligne sales
-				frm.doc.sellings.forEach(e => {e.qty = volume});
+            return {
 
-				volume = 0;
-				frm.doc.rh_tasting.forEach(e => {
-					volume += e.nombre * e.objectif_jour;
-				});
-				volume *= frm.doc.duree_tasting;
+                filters: {
 
-				frm.set_value("audience_tasting", volume);
-				frm.set_value("volume_tasting", volume);
+                    selling: 1,
 
-				//affectations deu volume a chaque ligne tasting
-				frm.doc.tastings.forEach(e => {e.qty = volume});
+                }
 
-				volume = 0;
-				frm.doc.rh_sampling.forEach(e => {
-					volume += e.nombre * e.objectif_jour;
-				});
-				volume *= frm.doc.duree_sampling;
+            };
 
-				//frm.doc.audience_sampling = volume;
-				//frm.doc.volume_sampling = volume;
-				frm.set_value("audience_sampling", volume);
-				frm.set_value("volume_sampling", volume);
+        });
 
-				volume = 0;
-				frm.doc.rh_survey.forEach(e => {
-					volume += e.nombre * e.objectif_jour;
-				});
-				volume *= frm.doc.duree_survey;
+        frm.set_query("item","sellings", function() {
 
-				//affectations deu volume a chaque ligne tasting
-				frm.doc.samplings.forEach(e => {e.qty = volume});
+            return {
 
-				frm.set_value("nb_survey", volume);
+                "filters": {
 
-				frm.refresh();
-				frappe.msgprint("Calcul terminé!");
-			}, "Utilitaires"
-		);
-		frm.add_custom_button(
-			__("Générer Budget"),
-			function () {
-				frm.clear_table("details")
-				frm.refresh_field('details');
-				/*frm.doc.sellings.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = "REVENUE";
-					row.qte = frm.doc.volume_sales;
-					row.pu = e.prix_vente * frm.doc.exchange_rate;
-					row.total = row.qte * row.pu;
-					row.type = 'REVENUE';
-					row.order = 'A';
-					row.style = 'color: red; font-weight: bold; font-style: italic;';
-				});
-				
-				frm.doc.sellings.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = frm.doc.volume_sales;
-					row.pu = e.prix_achat;
-					row.total = row.qte * row.pu;
-					row.type = 'Achat CM29';
-					row.order = 'A2';
-				});*/
-				if(frm.doc.frais_sponsoring > 0) {
-					frm.doc.sellings.forEach(e => {
-						var row = frm.add_child('details');
-						//row.item = e.item;
-						row.description = "Frais sponsoring";
-						row.qte = frm.doc.volume_sales;
-						row.pu = e.prix_vente * frm.doc.exchange_rate * frm.doc.coefficient;
-						row.total = row.qte * row.pu;
-						row.type = 'Sponsoring';
-						row.order = 'A1';
-					});
-				}
-				frm.doc.sales_materials_details.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = e.qty;
-					row.pu = e.cout;
-					row.total = row.qte * row.pu;
-					row.type = 'Materiel Support';
-					row.order = 'A3';
-				});
-				frm.doc.logistics.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = e.qty * e.conso_litre/100 * 1.2;
-					row.pu = e.cout * frm.doc.exchange_rate;
-					row.total = row.qte * row.pu;
-					row.type = 'Logistique';
-					row.order = 'A4';
-				});
-				frm.doc.rh_sales.forEach(e => {
-					//Salaire
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					row.description = e.type + ' SALAIRE';
-					row.qte = e.nombre * frm.doc.duree_vente;
-					row.pu =  e.salaire_jour ;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Salaire';
-					row.order = 'A5';
-					//Transport
-					if (e.transport_jour > 0){
-						var row = frm.add_child('details');
-						row.document_type = "Promoteur Salaire";
-						row.description = e.type + ' TRANSPORT';
-						row.qte = e.nombre * frm.doc.duree_vente;
-						row.pu = e.transport_jour ;
-						row.total = row.qte * row.pu;
-						row.type = 'Staff Transport';
-						row.order = 'A6';
-					}
-				});
+                    "item_group": ["IN", ["FG", "Package"]],
 
-				frm.doc.samplings.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = frm.doc.volume_sampling;
-					row.pu = e.cout ;
-					row.total = row.qte * row.pu;
-					row.type = 'Achat';
-					row.order = 'B';
-				});
-				frm.doc.sampling_material_details.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = e.qty;
-					row.pu = e.cout ;
-					row.total = row.qte * row.pu;
-					row.type = 'Materiel Support';
-					row.order = 'B1';
-				});
-				frm.doc.rh_sampling.forEach(e => {
-					//Salaire
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					row.description = e.type + ' SALAIRE';
-					row.qte = e.nombre * frm.doc.duree_sampling;
-					row.pu = e.salaire_jour;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Salaire';
-					row.order = 'B2';
-					//Transport
-					if (e.transport_jour > 0){
-						var row = frm.add_child('details');
-						row.document_type = "Promoteur Salaire";
-						row.description = e.type + ' TRANSPORT';
-						row.qte = e.nombre * frm.doc.duree_sampling;
-						row.pu = e.transport_jour;
-						row.total = row.qte * row.pu;
-						row.type = 'Staff Transport';
-						row.order = 'B3';
-					}
-				});
+                }
 
-				frm.doc.tastings.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = frm.doc.volume_tasting;
-					row.pu = e.cout ;
-					row.total = row.qte * row.pu;
-					row.type = 'Achat';
-					row.order = 'C';
-				});
-				frm.doc.tasting_material_details.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = e.qty;
-					row.pu = e.cout ;
-					row.total = row.qte * row.pu;
-					row.type = 'Materiel Support';
-					row.order = 'C1';
-				});
-				frm.doc.rh_tasting.forEach(e => {
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					//row.item = e.type;
-					row.description = e.type + 'SALAIRE';
-					row.qte = e.nombre * frm.doc.duree_tasting;
-					row.pu =  e.salaire_jour ;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Salaire';
-					row.order = 'C2';
-					//Transport
-					if (e.transport_jour > 0){
-						var row = frm.add_child('details');
-						row.document_type = "Promoteur Salaire";
-						row.description = e.type + ' TRANSPORT';
-						row.qte = e.nombre * frm.doc.duree_sampling;
-						row.pu = e.transport_jour;
-						row.total = row.qte * row.pu;
-						row.type = 'Staff Transport';
-						row.order = 'C3';
-					}
-				});
+            };
 
-				frm.doc.rh_survey.forEach(e => {
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					row.description = e.type + ' SALAIRE';
-					row.qte = e.nombre * frm.doc.duree_survey;
-					row.pu = e.salaire_jour;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Salaire';
-					row.order = 'D01';
+        });
 
-					if (e.transport_jour > 0) {
-						var row = frm.add_child('details');
-						row.document_type = "Promoteur Salaire";
-						row.description = e.type + ' TRANSPORT';
-						row.qte = e.nombre * frm.doc.duree_survey;
-						row.pu = e.transport_jour;
-						row.total = row.qte * row.pu;
-						row.type = 'Staff Transport';
-						row.order = 'D02';
-					}
-				});
-				frm.doc.survey_material_details.forEach(e => {
-					var row = frm.add_child('details');
-					//row.item = e.item;
-					row.description = e.description;
-					row.qte = e.qty;
-					row.pu = e.cout;
-					row.total = row.qte * row.pu;
-					row.type = 'Materiel Support';
-					row.order = 'D1';
-				});
+        frm.set_query("item","sales_materials_details", function() {
 
-				frm.doc.visibilities.forEach(e => {
-					var row = frm.add_child('details');
-					row.description = e.description;
-					row.qte = e.qty * frm.doc.duration;
-					row.pu = e.cout;
-					row.total = row.qte * row.pu;
-					row.type = 'Media & Autres';
-					row.order = 'E';
-				});
+            return {
 
-				frm.doc.rh_media.forEach(e => {
-					var row = frm.add_child('details');
-					row.document_type = "Promoteur Salaire";
-					row.description = e.type + ' SALAIRE';
-					row.qte = e.nombre * frm.doc.duration;
-					row.pu = e.salaire_jour;
-					row.total = row.qte * row.pu;
-					row.type = 'Staff Salaire';
-					row.order = 'E1';
+                "filters": {
 
-					if (e.transport_jour > 0) {
-						var row = frm.add_child('details');
-						row.document_type = "Promoteur Salaire";
-						row.description = e.type + ' TRANSPORT';
-						row.qte = e.nombre * frm.doc.duration;
-						row.pu = e.transport_jour;
-						row.total = row.qte * row.pu;
-						row.type = 'Staff Transport';
-						row.order = 'E2';
-					}
-				});
+                    "item_group": ["LIKE", "MRKT"],
 
-				frm.refresh_field('details');
-			}, "Utilitaires"
-		);
-		/*frm.set_query("product", "brand_product", function(frm, cdt, cdn) {
-			var row = locals[cdt][cdn];
-			return {
-				filters: {
-					brand: row.brand,
-				}
-			};
-		});*/
+                }
 
-		let i = 0;
-		frm.fields_dict.sellings.grid.grid_rows.forEach(s => {
-			s.columns['item'].on('click', 'input[data-fieldname="item"][data-doctype="Sales Details"]', () => {
-				frappe.set_route("Form", "Unite Vente", s.doc.item);
-			});
-			i++;
-		});
-	},
-	activite: function(frm){
-		on_activite_change(frm);
-	},
-	start_date: function(frm){
-		if(frm.doc.start_date && frm.doc.end_date) {
-			frm.set_value("duration",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+            };
 
-			frm.set_value("duree_vente",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
-			frm.set_value("duree_tasting",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
-			frm.set_value("duree_sampling",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
-			frm.set_value("duree_survey",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
-		}
-		frm.refresh_field("duration");
-		frm.refresh_field("duree_vente");
-		frm.refresh_field("duree_sampling");
-		frm.refresh_field("duree_tasting");
-		frm.refresh_field("duree_survey");
-	},
-	end_date: function(frm){
-		if(frm.doc.start_date && frm.doc.end_date) {
-			frm.set_value("duration",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+        });
 
-			frm.set_value("duree_vente",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
-			frm.set_value("duree_tasting",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
-			frm.set_value("duree_sampling",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
-			frm.set_value("duree_survey",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
-		}
-		frm.refresh_field("duration");
-		frm.refresh_field("duree_vente");
-		frm.refresh_field("duree_sampling");
-		frm.refresh_field("duree_tasting");
-		frm.refresh_field("duree_survey");
-	},
+        frm.set_query("produits", function() {
 
-	duration: function(frm){
-		if(frm.doc.duration) {
-			frm.set_value("duree_vente",frm.doc.duration);
-			frm.set_value("duree_tasting",frm.doc.duration);
-			frm.set_value("duree_sampling",frm.doc.duration);
-			frm.set_value("duree_survey",frm.doc.duration);
-		}
-		frm.refresh_field("duree_vente");
-		frm.refresh_field("duree_sampling");
-		frm.refresh_field("duree_tasting");
-		frm.refresh_field("duree_survey");
-	},
+            return {
 
-	get_exchange_rate: function(frm){
-		if (frm.doc.devise_vente && frm.doc.company_currency) {
-			if (frm.doc.devise_vente != frm.doc.company_currency) {
-				frappe.call({
-					method: "erpnext.setup.utils.get_exchange_rate",
-					args: {
-						from_currency: frm.doc.devise_vente,
-						to_currency: frm.doc.company_currency,
-					},
-					callback: function (r) {
-						frm.set_value("exchange_rate", flt(r.message));
-						frm.refresh_field("exchange_rate");
-					}
-				});
-			} else {
-				frm.set_value("exchange_rate", 1.0);
-			}
-		}
-	},
-	get_gross_selling_price: function(frm, item) {
-		return new Promise((resolve, reject) => {
-			frm.call({
-				method: "get_gross_selling_price",
-				args: {
-					"site": frm.doc.branch,
-					"item": item,
-				},
-				callback: (r) => {
-					//frm.refresh();
-					if (r.message) resolve(r.message);
-					else resolve(0);
-				},
-				error: (err) => {
-					// Handle any errors here
-					reject(err);
-				},
-			});
-		});
-	},
+                "filters": {
 
-	get_item_cost: function(frm, item) {
-		return new Promise((resolve, reject) => {
-			frm.call({
-				method: "get_item_cost",
-				args: {
-					"site": frm.doc.branch,
-					"item": item,
-				},
-				callback: (r) => {
-					//frm.refresh();
-					if (r.message) resolve(r.message);
-					else resolve(0);
-				},
-				error: (err) => {
-					// Handle any errors here
-					reject(err);
-				},
-			});
-		});
-	},
+                    "name": ["LIKE", "FG%"],
 
-	get_package_cost : function(frm, item) {
-		return new Promise((resolve, reject) => {
-			frm.call({
-				method: "get_package_cost",
-				args: {
-					"site": frm.doc.branch,
-					"item": item,
-				},
-				callback: (r) => {
-					//frm.refresh();
-					if (r.message) resolve(r.message);
-					else resolve(0);
-				},
-				error: (err) => {
-					// Handle any errors here
-					reject(err);
-				},
-			});
-		});
-	},
+                }
 
-	get_cm29_price: function(frm, item) {
-		return new Promise((resolve, reject) => {
-			frm.call({
-				method: "get_cm29_price",
-				args: {
-					"item": item,
-				},
-				callback: (r) => {
-					//frm.refresh();
-					if (r.message) resolve(r.message);
-					else resolve(0);
-				},
-				error: (err) => {
-					// Handle any errors here
-					reject(err);
-				},
-			});
-		});
-	},
+            };
 
-	get_agence_site: function(frm) {
-		return new Promise((resolve, reject) => {
-			frm.call({
-				method: "get_agence_site",
-				args: {
-					"agence": frm.doc.agence,
-				},
-				callback: (r) => {
-					//frm.refresh();
-					if (r.message) resolve(r.message);
-					else resolve(0);
-				},
-				error: (err) => {
-					// Handle any errors here
-					reject(err);
-				},
-			});
-		});
-	},
+        });
 
-	get_address: function(frm) {
-		return new Promise((resolve, reject) => {
-			frm.call({
-				method: "get_address",
-				args: {
-					"address": frm.doc.code_adresse,
-				},
-				callback: (r) => {
-					//frm.refresh();
-					if (r.message) resolve(r.message);
-					else resolve(0);
-				},
-				error: (err) => {
-					// Handle any errors here
-					reject(err);
-				},
-			});
-		});
-	},
+    },
 
-	get_cost: function(frm, item) {
-		return new Promise((resolve, reject) => {
-			frappe.call({
-				method: "erpnext.stock.get_item_details.get_valuation_rate",
-				args: {
-					item_code: item,
-					company: frm.doc.societe,
-					warehouse: frm.doc.warehouse,
-				},
-				callback: function (r) {
-					resolve(r.message.valuation_rate);
-					//frm.refresh_field("sales_materials_details");
-				},
-				error: (err) => {
-					// Handle any errors here
-					reject(err);
-				},
-			});
-		});
-	},
-	
-	company_currency: function (frm) {
-		frm.events.get_exchange_rate(frm);
-	},
-	devise_vente: function (frm) {
-		frm.events.get_exchange_rate(frm);
-	},
+    /*agence: function(frm) {
 
-	get_zones: function(frm,dialog) {
-		frappe.call({
-			method: "mkt_project.mkt_project.doctype.projet.projet.get_agence_site",
-			args: { "agence": frm.doc.agence },
-			callback: function (r) {
-				// Your callback logic here
-				dialog.fields_dict.zones.df.data.length = 0;
-				r.message.forEach(d => {
-					dialog.fields_dict.zones.df.data.push({
-						commune: d.commune,
-						zone: d.zone,
-						distance: d.distance,
-					});
-				})
-				//cur_dialog.fields_dict.zones.df.data
-				dialog.fields_dict.zones.refresh()
-			},
-		});
-	},
-	
+        cur_frm.events.get_agence_site(frm).then((result)=> {
+
+            frm.clear_table("zones");
+
+            result.forEach(e => {
+
+                var row = frm.add_child('zones');
+
+                row.commune = e.commune;
+
+                row.zone = e.zone;
+
+                row.distance = e.distance;
+
+            });
+
+            frm.refresh_field('zones');
+
+        });
+
+    },*/
+
+    code_adresse: function(frm) {
+
+        cur_frm.events.get_address(frm).then((result)=> {
+
+            frm.doc.adresse = result.address_line1 + "\n";
+
+            if (result.address_line2) frm.doc.adresse += result.address_line2 + "\n";
+
+            if (result.city) frm.doc.adresse += result.city + "\n";
+
+            if (result.country) frm.doc.adresse += result.country + "\n";
+
+            if (result.email_id) frm.doc.adresse += result.email_id + "\n";
+
+            if (result.phone) frm.doc.adresse += result.phone;
+
+
+
+            frm.refresh_field('adresse');
+
+        });
+
+    },
+
+    refresh: function(frm) {
+
+        frm.add_custom_button(__("Zones de couverture"),
+
+            function () {
+
+                var fields_dict = [];
+
+                fields_dict.push({
+
+                    label: 'Zones',
+
+                    fieldname: 'zones',
+
+                    fieldtype: 'Table',
+
+                    data: [],
+
+                    fields: [
+
+                        {
+
+                            label: 'Commune',
+
+                            fieldname: 'commune',
+
+                            fieldtype: 'Data',
+
+                            in_list_view: 1,
+
+                            fieldwidth: '4',
+
+                            read_only: 1,
+
+                        },
+
+                        {
+
+                            label: 'Zone',
+
+                            fieldname: 'zone',
+
+                            fieldtype: 'Data',
+
+                            fieldwidth: '4',
+
+                            in_list_view: 1,
+
+                            read_only: 1,
+
+                        },
+
+                        {
+
+                            label: 'Distance',
+
+                            fieldname: 'distance',
+
+                            fieldtype: 'Float',
+
+                            fieldwidth: '2',
+
+                            in_list_view: 1,
+
+                            read_only: 1,
+
+                        },
+
+                    ],
+
+                },);
+
+
+
+
+
+                let d = new frappe.ui.Dialog({
+
+                    title: 'Zones de couverture',
+
+                    fields: fields_dict,
+
+                    primary_action_label: __('zones'),
+
+                    primary_action(values) {
+
+                        values.zones.forEach(x => {if (x.__checked) {
+
+                            var row = frm.add_child('zones');
+
+                            row.commune = x.commune ;
+
+                            row.zone = x.zone;
+
+                            row.distance = x.distance;
+
+                        }});
+
+                        cur_frm.refresh_field("zones");
+
+                    }
+
+                });
+
+                d.show();
+
+                cur_frm.events.get_zones(cur_frm, d);
+
+            },
+
+        );
+
+
+
+        frm.set_query('code_adresse', function(doc) {
+
+            return {
+
+                "filters": {
+
+                    "name": ["LIKE", frm.doc.agence + "%"],
+
+                }
+
+            };
+
+        });
+
+        frm.add_custom_button(
+
+            __("Calcul Objectifs"),
+
+            function () {
+
+                var volume = 0;
+
+                var revenue = 0;
+
+                frm.doc.rh_sales.forEach(e => {
+
+                    volume += e.nombre * e.objectif_jour;
+
+                });
+
+                volume *= frm.doc.duree_vente;
+
+                frm.doc.sellings.forEach(e => {
+
+                    revenue += e.prix_vente * frm.doc.exchange_rate * volume;
+
+                });
+
+                frm.set_value("frais_sponsoring", revenue * frm.doc.coefficient);
+
+                //frm.doc.audience_sales = volume;
+
+                //frm.doc.volume_sales = volume;
+
+                //frm.doc.revenue_sales = revenue;
+
+                frm.set_value("audience_sales", volume);
+
+                frm.set_value("volume_sales", volume);
+
+                frm.set_value("revenue_sales", revenue);
+
+
+
+                //affectations deu volume a chaque ligne sales
+
+                frm.doc.sellings.forEach(e => {e.qty = volume});
+
+
+
+                volume = 0;
+
+                frm.doc.rh_tasting.forEach(e => {
+
+                    volume += e.nombre * e.objectif_jour;
+
+                });
+
+                volume *= frm.doc.duree_tasting;
+
+
+
+                frm.set_value("audience_tasting", volume);
+
+                frm.set_value("volume_tasting", volume);
+
+
+
+                //affectations deu volume a chaque ligne tasting
+
+                frm.doc.tastings.forEach(e => {e.qty = volume});
+
+
+
+                volume = 0;
+
+                frm.doc.rh_sampling.forEach(e => {
+
+                    volume += e.nombre * e.objectif_jour;
+
+                });
+
+                volume *= frm.doc.duree_sampling;
+
+
+
+                //frm.doc.audience_sampling = volume;
+
+                //frm.doc.volume_sampling = volume;
+
+                frm.set_value("audience_sampling", volume);
+
+                frm.set_value("volume_sampling", volume);
+
+
+
+                volume = 0;
+
+                frm.doc.rh_survey.forEach(e => {
+
+                    volume += e.nombre * e.objectif_jour;
+
+                });
+
+                volume *= frm.doc.duree_survey;
+
+
+
+                //affectations deu volume a chaque ligne tasting
+
+                frm.doc.samplings.forEach(e => {e.qty = volume});
+
+
+
+                frm.set_value("nb_survey", volume);
+
+
+
+                frm.refresh();
+
+                frappe.msgprint("Calcul terminé!");
+
+            }, "Utilitaires"
+
+        );
+
+        frm.add_custom_button(
+
+            __("Générer Budget"),
+
+            function () {
+
+                frm.clear_table("details")
+
+                frm.refresh_field('details');
+
+                /*frm.doc.sellings.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = "REVENUE";
+
+                    row.qte = frm.doc.volume_sales;
+
+                    row.pu = e.prix_vente * frm.doc.exchange_rate;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'REVENUE';
+
+                    row.order = 'A';
+
+                    row.style = 'color: red; font-weight: bold; font-style: italic;';
+
+                });
+
+
+
+                frm.doc.sellings.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = e.description;
+
+                    row.qte = frm.doc.volume_sales;
+
+                    row.pu = e.prix_achat;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Achat CM29';
+
+                    row.order = 'A2';
+
+                });*/
+
+                if(frm.doc.frais_sponsoring > 0) {
+
+                    frm.doc.sellings.forEach(e => {
+
+                        var row = frm.add_child('details');
+
+                        //row.item = e.item;
+
+                        row.description = "Frais sponsoring";
+
+                        row.qte = frm.doc.volume_sales;
+
+                        row.pu = e.prix_vente * frm.doc.exchange_rate * frm.doc.coefficient;
+
+                        row.total = row.qte * row.pu;
+
+                        row.type = 'Sponsoring';
+
+                        row.order = 'A1';
+
+                    });
+
+                }
+
+                frm.doc.sales_materials_details.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = e.description;
+
+                    row.qte = e.qty;
+
+                    row.pu = e.cout;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Materiel Support';
+
+                    row.order = 'A3';
+
+                });
+
+                frm.doc.logistics.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = e.description;
+
+                    row.qte = e.qty * e.conso_litre/100 * 1.2;
+
+                    row.pu = e.cout * frm.doc.exchange_rate;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Logistique';
+
+                    row.order = 'A4';
+
+                });
+
+                frm.doc.rh_sales.forEach(e => {
+
+                    //Salaire
+
+                    var row = frm.add_child('details');
+
+                    row.document_type = "Promoteur Salaire";
+
+                    row.description = e.type + ' SALAIRE';
+
+                    row.qte = e.nombre * frm.doc.duree_vente;
+
+                    row.pu =  e.salaire_jour ;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Staff Salaire';
+
+                    row.order = 'A5';
+
+                    //Transport
+
+                    if (e.transport_jour > 0){
+
+                        var row = frm.add_child('details');
+
+                        row.document_type = "Promoteur Salaire";
+
+                        row.description = e.type + ' TRANSPORT';
+
+                        row.qte = e.nombre * frm.doc.duree_vente;
+
+                        row.pu = e.transport_jour ;
+
+                        row.total = row.qte * row.pu;
+
+                        row.type = 'Staff Transport';
+
+                        row.order = 'A6';
+
+                    }
+
+                });
+
+
+
+                frm.doc.samplings.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = e.description;
+
+                    row.qte = frm.doc.volume_sampling;
+
+                    row.pu = e.cout ;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Achat';
+
+                    row.order = 'B';
+
+                });
+
+                frm.doc.sampling_material_details.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = e.description;
+
+                    row.qte = e.qty;
+
+                    row.pu = e.cout ;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Materiel Support';
+
+                    row.order = 'B1';
+
+                });
+
+                frm.doc.rh_sampling.forEach(e => {
+
+                    //Salaire
+
+                    var row = frm.add_child('details');
+
+                    row.document_type = "Promoteur Salaire";
+
+                    row.description = e.type + ' SALAIRE';
+
+                    row.qte = e.nombre * frm.doc.duree_sampling;
+
+                    row.pu = e.salaire_jour;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Staff Salaire';
+
+                    row.order = 'B2';
+
+                    //Transport
+
+                    if (e.transport_jour > 0){
+
+                        var row = frm.add_child('details');
+
+                        row.document_type = "Promoteur Salaire";
+
+                        row.description = e.type + ' TRANSPORT';
+
+                        row.qte = e.nombre * frm.doc.duree_sampling;
+
+                        row.pu = e.transport_jour;
+
+                        row.total = row.qte * row.pu;
+
+                        row.type = 'Staff Transport';
+
+                        row.order = 'B3';
+
+                    }
+
+                });
+
+
+
+                frm.doc.tastings.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = e.description;
+
+                    row.qte = frm.doc.volume_tasting;
+
+                    row.pu = e.cout ;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Achat';
+
+                    row.order = 'C';
+
+                });
+
+                frm.doc.tasting_material_details.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = e.description;
+
+                    row.qte = e.qty;
+
+                    row.pu = e.cout ;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Materiel Support';
+
+                    row.order = 'C1';
+
+                });
+
+                frm.doc.rh_tasting.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    row.document_type = "Promoteur Salaire";
+
+                    //row.item = e.type;
+
+                    row.description = e.type + 'SALAIRE';
+
+                    row.qte = e.nombre * frm.doc.duree_tasting;
+
+                    row.pu =  e.salaire_jour ;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Staff Salaire';
+
+                    row.order = 'C2';
+
+                    //Transport
+
+                    if (e.transport_jour > 0){
+
+                        var row = frm.add_child('details');
+
+                        row.document_type = "Promoteur Salaire";
+
+                        row.description = e.type + ' TRANSPORT';
+
+                        row.qte = e.nombre * frm.doc.duree_sampling;
+
+                        row.pu = e.transport_jour;
+
+                        row.total = row.qte * row.pu;
+
+                        row.type = 'Staff Transport';
+
+                        row.order = 'C3';
+
+                    }
+
+                });
+
+
+
+                frm.doc.rh_survey.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    row.document_type = "Promoteur Salaire";
+
+                    row.description = e.type + ' SALAIRE';
+
+                    row.qte = e.nombre * frm.doc.duree_survey;
+
+                    row.pu = e.salaire_jour;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Staff Salaire';
+
+                    row.order = 'D01';
+
+
+
+                    if (e.transport_jour > 0) {
+
+                        var row = frm.add_child('details');
+
+                        row.document_type = "Promoteur Salaire";
+
+                        row.description = e.type + ' TRANSPORT';
+
+                        row.qte = e.nombre * frm.doc.duree_survey;
+
+                        row.pu = e.transport_jour;
+
+                        row.total = row.qte * row.pu;
+
+                        row.type = 'Staff Transport';
+
+                        row.order = 'D02';
+
+                    }
+
+                });
+
+                frm.doc.survey_material_details.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    //row.item = e.item;
+
+                    row.description = e.description;
+
+                    row.qte = e.qty;
+
+                    row.pu = e.cout;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Materiel Support';
+
+                    row.order = 'D1';
+
+                });
+
+
+
+                frm.doc.visibilities.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    row.description = e.description;
+
+                    row.qte = e.qty * frm.doc.duration;
+
+                    row.pu = e.cout;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Media & Autres';
+
+                    row.order = 'E';
+
+                });
+
+
+
+                frm.doc.rh_media.forEach(e => {
+
+                    var row = frm.add_child('details');
+
+                    row.document_type = "Promoteur Salaire";
+
+                    row.description = e.type + ' SALAIRE';
+
+                    row.qte = e.nombre * frm.doc.duration;
+
+                    row.pu = e.salaire_jour;
+
+                    row.total = row.qte * row.pu;
+
+                    row.type = 'Staff Salaire';
+
+                    row.order = 'E1';
+
+
+
+                    if (e.transport_jour > 0) {
+
+                        var row = frm.add_child('details');
+
+                        row.document_type = "Promoteur Salaire";
+
+                        row.description = e.type + ' TRANSPORT';
+
+                        row.qte = e.nombre * frm.doc.duration;
+
+                        row.pu = e.transport_jour;
+
+                        row.total = row.qte * row.pu;
+
+                        row.type = 'Staff Transport';
+
+                        row.order = 'E2';
+
+                    }
+
+                });
+
+
+
+                frm.refresh_field('details');
+
+            }, "Utilitaires"
+
+        );
+
+        /*frm.set_query("product", "brand_product", function(frm, cdt, cdn) {
+
+            var row = locals[cdt][cdn];
+
+            return {
+
+                filters: {
+
+                    brand: row.brand,
+
+                }
+
+            };
+
+        });*/
+
+
+
+        const grid = frm.fields_dict.sellings.grid;
+        const selector = 'input[data-fieldname="item"][data-doctype="Sales Details"]';
+
+        grid.wrapper
+            .off("click.mkt_sales_item", selector)
+            .on("click.mkt_sales_item", selector, function () {
+                const item = $(this).closest(".grid-row").data("grid_row")?.doc?.item;
+
+                if (item) {
+                    frappe.set_route("Form", "Unite Vente", item);
+                }
+            });
+
+    },
+
+    activite: function(frm){
+
+        on_activite_change(frm);
+
+    },
+
+    start_date: function(frm){
+
+        if(frm.doc.start_date && frm.doc.end_date) {
+
+            frm.set_value("duration",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+
+
+            frm.set_value("duree_vente",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+            frm.set_value("duree_tasting",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+            frm.set_value("duree_sampling",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+            frm.set_value("duree_survey",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+        }
+
+        frm.refresh_field("duration");
+
+        frm.refresh_field("duree_vente");
+
+        frm.refresh_field("duree_sampling");
+
+        frm.refresh_field("duree_tasting");
+
+        frm.refresh_field("duree_survey");
+
+    },
+
+    end_date: function(frm){
+
+        if(frm.doc.start_date && frm.doc.end_date) {
+
+            frm.set_value("duration",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+
+
+            frm.set_value("duree_vente",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+            frm.set_value("duree_tasting",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+            frm.set_value("duree_sampling",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+            frm.set_value("duree_survey",frappe.datetime.get_day_diff(frm.doc.end_date,frm.doc.start_date) + 1);
+
+        }
+
+        frm.refresh_field("duration");
+
+        frm.refresh_field("duree_vente");
+
+        frm.refresh_field("duree_sampling");
+
+        frm.refresh_field("duree_tasting");
+
+        frm.refresh_field("duree_survey");
+
+    },
+
+
+
+    duration: function(frm){
+
+        if(frm.doc.duration) {
+
+            frm.set_value("duree_vente",frm.doc.duration);
+
+            frm.set_value("duree_tasting",frm.doc.duration);
+
+            frm.set_value("duree_sampling",frm.doc.duration);
+
+            frm.set_value("duree_survey",frm.doc.duration);
+
+        }
+
+        frm.refresh_field("duree_vente");
+
+        frm.refresh_field("duree_sampling");
+
+        frm.refresh_field("duree_tasting");
+
+        frm.refresh_field("duree_survey");
+
+    },
+
+
+
+    get_exchange_rate: function(frm){
+
+        if (frm.doc.devise_vente && frm.doc.company_currency) {
+
+            if (frm.doc.devise_vente != frm.doc.company_currency) {
+
+                frappe.call({
+
+                    method: "erpnext.setup.utils.get_exchange_rate",
+
+                    args: {
+
+                        from_currency: frm.doc.devise_vente,
+
+                        to_currency: frm.doc.company_currency,
+
+                    },
+
+                    callback: function (r) {
+
+                        frm.set_value("exchange_rate", flt(r.message));
+
+                        frm.refresh_field("exchange_rate");
+
+                    }
+
+                });
+
+            } else {
+
+                frm.set_value("exchange_rate", 1.0);
+
+            }
+
+        }
+
+    },
+
+    get_gross_selling_price: function(frm, item) {
+
+        return new Promise((resolve, reject) => {
+
+            frm.call({
+
+                method: "get_gross_selling_price",
+
+                args: {
+
+                    "site": frm.doc.branch,
+
+                    "item": item,
+
+                },
+
+                callback: (r) => {
+
+                    //frm.refresh();
+
+                    if (r.message) resolve(r.message);
+
+                    else resolve(0);
+
+                },
+
+                error: (err) => {
+
+                    // Handle any errors here
+
+                    reject(err);
+
+                },
+
+            });
+
+        });
+
+    },
+
+
+
+    get_item_cost: function(frm, item) {
+
+        return new Promise((resolve, reject) => {
+
+            frm.call({
+
+                method: "get_item_cost",
+
+                args: {
+
+                    "site": frm.doc.branch,
+
+                    "item": item,
+
+                },
+
+                callback: (r) => {
+
+                    //frm.refresh();
+
+                    if (r.message) resolve(r.message);
+
+                    else resolve(0);
+
+                },
+
+                error: (err) => {
+
+                    // Handle any errors here
+
+                    reject(err);
+
+                },
+
+            });
+
+        });
+
+    },
+
+
+
+    get_package_cost : function(frm, item) {
+
+        return new Promise((resolve, reject) => {
+
+            frm.call({
+
+                method: "get_package_cost",
+
+                args: {
+
+                    "site": frm.doc.branch,
+
+                    "item": item,
+
+                },
+
+                callback: (r) => {
+
+                    //frm.refresh();
+
+                    if (r.message) resolve(r.message);
+
+                    else resolve(0);
+
+                },
+
+                error: (err) => {
+
+                    // Handle any errors here
+
+                    reject(err);
+
+                },
+
+            });
+
+        });
+
+    },
+
+
+
+    get_cm29_price: function(frm, item) {
+
+        return new Promise((resolve, reject) => {
+
+            frm.call({
+
+                method: "get_cm29_price",
+
+                args: {
+
+                    "item": item,
+
+                },
+
+                callback: (r) => {
+
+                    //frm.refresh();
+
+                    if (r.message) resolve(r.message);
+
+                    else resolve(0);
+
+                },
+
+                error: (err) => {
+
+                    // Handle any errors here
+
+                    reject(err);
+
+                },
+
+            });
+
+        });
+
+    },
+
+
+
+    get_agence_site: function(frm) {
+
+        return new Promise((resolve, reject) => {
+
+            frm.call({
+
+                method: "get_agence_site",
+
+                args: {
+
+                    "agence": frm.doc.agence,
+
+                },
+
+                callback: (r) => {
+
+                    //frm.refresh();
+
+                    if (r.message) resolve(r.message);
+
+                    else resolve(0);
+
+                },
+
+                error: (err) => {
+
+                    // Handle any errors here
+
+                    reject(err);
+
+                },
+
+            });
+
+        });
+
+    },
+
+
+
+    get_address: function(frm) {
+
+        return new Promise((resolve, reject) => {
+
+            frm.call({
+
+                method: "get_address",
+
+                args: {
+
+                    "address": frm.doc.code_adresse,
+
+                },
+
+                callback: (r) => {
+
+                    //frm.refresh();
+
+                    if (r.message) resolve(r.message);
+
+                    else resolve(0);
+
+                },
+
+                error: (err) => {
+
+                    // Handle any errors here
+
+                    reject(err);
+
+                },
+
+            });
+
+        });
+
+    },
+
+
+
+    get_cost: function(frm, item) {
+
+        return new Promise((resolve, reject) => {
+
+            frappe.call({
+
+                method: "erpnext.stock.get_item_details.get_valuation_rate",
+
+                args: {
+
+                    item_code: item,
+
+                    company: frm.doc.societe,
+
+                    warehouse: frm.doc.warehouse,
+
+                },
+
+                callback: function (r) {
+
+                    resolve(r.message.valuation_rate);
+
+                    //frm.refresh_field("sales_materials_details");
+
+                },
+
+                error: (err) => {
+
+                    // Handle any errors here
+
+                    reject(err);
+
+                },
+
+            });
+
+        });
+
+    },
+
+
+
+    company_currency: function (frm) {
+
+        frm.events.get_exchange_rate(frm);
+
+    },
+
+    devise_vente: function (frm) {
+
+        frm.events.get_exchange_rate(frm);
+
+    },
+
+
+
+    get_zones: function(frm,dialog) {
+
+        frappe.call({
+
+            method: "mkt_project.mkt_project.doctype.projet.projet.get_agence_site",
+
+            args: { "agence": frm.doc.agence },
+
+            callback: function (r) {
+
+                // Your callback logic here
+
+                dialog.fields_dict.zones.df.data.length = 0;
+
+                r.message.forEach(d => {
+
+                    dialog.fields_dict.zones.df.data.push({
+
+                        commune: d.commune,
+
+                        zone: d.zone,
+
+                        distance: d.distance,
+
+                    });
+
+                })
+
+                //cur_dialog.fields_dict.zones.df.data
+
+                dialog.fields_dict.zones.refresh()
+
+            },
+
+        });
+
+    },
+
+
+
 });
+
+
 
 /*frappe.ui.form.on(cur_frm.doctype, {
+
     'onload_post_render': function(frm, cdt, cdn) {
-		let i = 0;
-		frm.fields_dict.sellings.grid.grid_rows.forEach(s => {
-			s.columns['item'].on('click', 'input[data-fieldname="item"][data-doctype="Sales Details"]', function(e) {
-				console.log(s.doc.item);
-				frappe.set_route("Form", "Unite Vente", s.doc.item);
-			});
-			i++;
-		});
+
+        let i = 0;
+
+        frm.fields_dict.sellings.grid.grid_rows.forEach(s => {
+
+            s.columns['item'].on('click', 'input[data-fieldname="item"][data-doctype="Sales Details"]', function(e) {
+
+                console.log(s.doc.item);
+
+                frappe.set_route("Form", "Unite Vente", s.doc.item);
+
+            });
+
+            i++;
+
+        });
+
     }
+
 });*/
+
+
 
 function create_marketing_bpm(frm, rows) {
-	const total = rows.reduce((sum, row) => sum + flt(row.total), 0);
 
-	frappe.new_doc("BPM Marketing Operations", {
-		project: frm.doc.name,
-		description: rows.map(row => row.description).filter(Boolean).join(" / "),
-		amount: total,
-		currency: "USD",
-		date: frappe.datetime.get_today(),
-		supplier: frm.doc.agence || "",
-		mois: frm.doc.mois || "",
-		branch: frm.doc.branch || ""
-	}, doc => rows.forEach(source => Object.assign(
-		frappe.model.add_child(doc, "budget_allocation"),
-		{
-			budget_detail: source.name,
-			description: source.description || "",
-			budget_amount: flt(source.total),
-			amount: flt(source.total)
-		}
-	)));
+    const total = rows.reduce((sum, row) => sum + flt(row.total), 0);
+
+
+
+    frappe.new_doc("BPM Marketing Operations", {
+
+        project: frm.doc.name,
+
+        description: rows.map(row => row.description).filter(Boolean).join(" / "),
+
+        amount: total,
+
+        currency: "USD",
+
+        date: frappe.datetime.get_today(),
+
+        supplier: frm.doc.agence || "",
+
+        mois: frm.doc.mois || "",
+
+        branch: frm.doc.branch || ""
+
+    }, doc => rows.forEach(source => Object.assign(
+
+        frappe.model.add_child(doc, "budget_allocation"),
+
+        {
+
+            budget_detail: source.name,
+
+            description: source.description || "",
+
+            budget_amount: flt(source.total),
+
+            amount: flt(source.total)
+
+        }
+
+    )));
+
 }
+
+
 
 function setup_budget_expense_action(frm) {
-	if (frm.doc.docstatus !== 1) return;
 
-	const grid = frm.fields_dict.details.grid;
-
-	// Pas d'ajout/suppression de lignes.
-	// Les checkboxes servent uniquement à sélectionner.
-	grid.cannot_add_rows = true;
-	grid.cannot_delete_rows = true;
-	grid.df.cannot_add_rows = true;
-	grid.df.cannot_delete_rows = true;
-
-	const btn = grid.add_custom_button(__("Dépenses"), () => {
-		const rows = grid.get_selected_children();
-
-		if (rows.length) {
-			create_marketing_bpm(frm, rows);
-		}
-	});
-
-	btn
-		.removeClass("btn-secondary")
-		.addClass("btn-primary")
-		.hide();
+    if (frm.doc.docstatus !== 1) return;
 
 
-	function refresh_selection() {
 
-		// Frappe désactive les checkbox d'une grille Read Only.
-		// On les réactive uniquement pour la sélection.
-		grid.toggle_checkboxes(true);
-
-		const has_selection =
-			grid.get_selected_children().length > 0;
-
-		// Aucun bouton standard Delete
-		grid.wrapper
-			.find(".grid-remove-rows, .grid-remove-all-rows")
-			.hide();
-
-		// Aucun bouton Add Row
-		grid.wrapper
-			.find(".grid-add-row, .grid-add-multiple-rows")
-			.hide();
-
-		// Footer seulement lorsqu'une ligne est sélectionnée
-		grid.wrapper
-			.find(".grid-footer")
-			.toggleClass("hidden", !has_selection);
-
-		btn.toggle(has_selection);
-	}
+    const grid = frm.fields_dict.details.grid;
 
 
-	/*
-	 * Frappe déclenche "change" à la fin de grid.refresh().
-	 * On réactive donc les checkbox après chaque refresh.
-	 */
-	grid.wrapper
-		.off("change.bpm_budget_grid")
-		.on("change.bpm_budget_grid", () => {
-			setTimeout(refresh_selection, 0);
-		});
+
+    // Pas d'ajout/suppression de lignes.
+
+    // Les checkboxes servent uniquement à sélectionner.
+
+    grid.cannot_add_rows = true;
+
+    grid.cannot_delete_rows = true;
+
+    grid.df.cannot_add_rows = true;
+
+    grid.df.cannot_delete_rows = true;
 
 
-	/*
-	 * Mise à jour immédiate après sélection/désélection.
-	 */
-	grid.wrapper
-		.off("click.bpm_budget_select", ".grid-row-check")
-		.on(
-			"click.bpm_budget_select",
-			".grid-row-check",
-			() => {
-				setTimeout(refresh_selection, 0);
-			}
-		);
+
+    const btn = grid.add_custom_button(__("Dépenses"), () => {
+
+        const rows = grid.get_selected_children();
 
 
-	setTimeout(refresh_selection, 0);
+
+        if (rows.length) {
+
+            create_marketing_bpm(frm, rows);
+
+        }
+
+    });
+
+
+
+    btn
+
+        .removeClass("btn-secondary")
+
+        .addClass("btn-primary")
+
+        .hide();
+
+
+
+
+
+    function refresh_selection() {
+
+
+
+        // Frappe désactive les checkbox d'une grille Read Only.
+
+        // On les réactive uniquement pour la sélection.
+
+        grid.toggle_checkboxes(true);
+
+
+
+        const has_selection =
+
+            grid.get_selected_children().length > 0;
+
+
+
+        // Aucun bouton standard Delete
+
+        grid.wrapper
+
+            .find(".grid-remove-rows, .grid-remove-all-rows")
+
+            .hide();
+
+
+
+        // Aucun bouton Add Row
+
+        grid.wrapper
+
+            .find(".grid-add-row, .grid-add-multiple-rows")
+
+            .hide();
+
+
+
+        // Footer seulement lorsqu'une ligne est sélectionnée
+
+        grid.wrapper
+
+            .find(".grid-footer")
+
+            .toggleClass("hidden", !has_selection);
+
+
+
+        btn.toggle(has_selection);
+
+    }
+
+
+
+
+
+    /*
+
+     * Frappe déclenche "change" à la fin de grid.refresh().
+
+     * On réactive donc les checkbox après chaque refresh.
+
+     */
+
+    grid.wrapper
+
+        .off("change.bpm_budget_grid")
+
+        .on("change.bpm_budget_grid", () => {
+
+            setTimeout(refresh_selection, 0);
+
+        });
+
+
+
+
+
+    /*
+
+     * Mise à jour immédiate après sélection/désélection.
+
+     */
+
+    grid.wrapper
+
+        .off("click.bpm_budget_select", ".grid-row-check")
+
+        .on(
+
+            "click.bpm_budget_select",
+
+            ".grid-row-check",
+
+            () => {
+
+                setTimeout(refresh_selection, 0);
+
+            }
+
+        );
+
+
+
+
+
+    setTimeout(refresh_selection, 0);
+
 }
+
+
 
 frappe.ui.form.on("Projet", {
-	refresh: setup_budget_expense_action
+
+    refresh: setup_budget_expense_action
+
 });
+
+
 
 frappe.ui.form.on('Budget Details', {
-	
+
+
+
     qte(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
+
+        var row = locals[cdt][cdn]; 
+
         if(row.qte && row.pu){
-			row.total = row.qte * row.pu;
-		}
-		else{
-			row.total = 0;
-		}
-		frm.refresh_field("details");
+
+            row.total = row.qte * row.pu;
+
+        }
+
+        else{
+
+            row.total = 0;
+
+        }
+
+        frm.refresh_field("details");
+
     },
 
-	pu(frm, cdt, cdn) {
-		//frm.events.calcul(frm); todo
-		var row = locals[cdt][cdn]; 
+
+
+    pu(frm, cdt, cdn) {
+
+        //frm.events.calcul(frm); todo
+
+        var row = locals[cdt][cdn]; 
+
         if(row.qte && row.pu){
-			row.total = row.qte * row.pu;
-		}
-		else{
-			row.total = 0;
-		}
-		frm.refresh_field("details");
-	},
 
-	depense(frm, cdt, cdn) {
-		create_marketing_bpm(frm, [locals[cdt][cdn]]);
+            row.total = row.qte * row.pu;
+
+        }
+
+        else{
+
+            row.total = 0;
+
+        }
+
+        frm.refresh_field("details");
+
+    },
+
+
+
+    depense(frm, cdt, cdn) {
+
+        create_marketing_bpm(frm, [locals[cdt][cdn]]);
+
     }
+
 });
 
-frappe.ui.form.on('Sales Details', {
-	sellings_add(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		const item = frm.fields_dict.sellings.grid.grid_rows[row.idx - 1].doc.item;
-		console.log(item);
-		frm.fields_dict.sellings.grid.grid_rows[row.idx - 1].columns['item'].on('click', () => {
-		if(item){
-			//console.log(item);
-			frappe.set_route("Form", "Unite Vente", item);
-		}
-	  });
-	}
-});
+
 
 frappe.ui.form.on('Marque Produit', {
-	marque_produit_add(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		row.marque = frm.doc.marque_principale;
-		frm.refresh_field("marque_produit");
-	}
+
+    marque_produit_add(frm, cdt, cdn) {
+
+        var row = locals[cdt][cdn]; 
+
+        row.marque = frm.doc.marque_principale;
+
+        frm.refresh_field("marque_produit");
+
+    }
+
 });
+
+
 
 /*frappe.ui.form.on("Projet","onload", function(frm, cdt, cdn) { 
-	on_activite_change(frm);
+
+    on_activite_change(frm);
+
+
 
 });
 
-const on_activite_change = (frm) =>{
-	var is_corporate = frappe.meta.get_docfield("Projet","is_corporate", cur_frm.doc.name);
-	var lieu = frappe.meta.get_docfield("Projet","lieu", cur_frm.doc.name);
-	var selling = frappe.meta.get_docfield("Projet","selling", cur_frm.doc.name);
-	var tasting = frappe.meta.get_docfield("Projet","tasting", cur_frm.doc.name);
-	var sampling = frappe.meta.get_docfield("Projet","sampling", cur_frm.doc.name);
-	var visibility = frappe.meta.get_docfield("Projet","visibility", cur_frm.doc.name);
-	var logistic = frappe.meta.get_docfield("Projet","logistic", cur_frm.doc.name);
-    //is_corporate.read_only = 1;
-	//is_corporate.reqd = 1;
 
-	switch (frm.doc.activite) {
-		case "DOOR TO DOOR":
-			is_corporate.read_only = 1;
-			lieu.read_only = 1;
-			selling.read_only = 1;
-			tasting.read_only = 1;
-			sampling.read_only = 1;
-			frm.doc.visibility = 0;
-			visibility.read_only = 1;
-			logistic.read_only = 0;
-			frm.doc.selling = 1;
-			clear_tasting(frm);
-			clear_sampling(frm);
-			break;
-		case "ECOLES":
-			is_corporate.read_only = 1;
-			lieu.read_only = 1;
-			selling.read_only = 0;
-			tasting.read_only = 0;
-			sampling.read_only = 0;
-			frm.doc.visibility = 0;
-			visibility.read_only = 1;
-			frm.doc.logistic = 0;
-			logistic.read_only = 1;
-			break;
-		case "PLACE PUBLIQUE":
-			is_corporate.read_only = 1;
-			lieu.read_only = 1;
-			selling.read_only = 0;
-			tasting.read_only = 0;
-			sampling.read_only = 0;
-			frm.doc.visibility = 0;
-			visibility.read_only = 1;
-			frm.doc.logistic = 0;
-			logistic.read_only = 1;
-			break;
-		case "MATERNITES":
-			is_corporate.read_only = 1;
-			lieu.read_only = 1;
-			selling.read_only = 0;
-			tasting.read_only = 1;
-			sampling.read_only = 1;
-			frm.doc.visibility = 0;
-			visibility.read_only = 1;
-			frm.doc.logistic = 0;
-			logistic.read_only = 1;
-			clear_tasting(frm);
-			clear_sampling(frm);
-			break;
-		case "SURVEY QUANTI":
-			is_corporate.read_only = 1;
-			lieu.read_only = 1;
-			selling.read_only = 1;
-			selling.read_only = 1;
-			tasting.read_only = 1;
-			sampling.read_only = 1;
-			frm.doc.visibility = 0;
-			visibility.read_only = 1;
-			frm.doc.logistic = 0;
-			logistic.read_only = 1;
-			clear_vente(frm);
-			clear_tasting(frm);
-			clear_sampling(frm);
-			break;
-		case "SURVEY QUALI":
-			is_corporate.read_only = 1;
-			lieu.read_only = 1;
-			selling.read_only = 1;
-			tasting.read_only = 1;
-			sampling.read_only = 1;
-			frm.doc.visibility = 0;
-			visibility.read_only = 1;
-			frm.doc.logistic = 0;
-			logistic.read_only = 1;
-			clear_vente(frm);
-			clear_tasting(frm);
-			clear_sampling(frm);
-			break;
-		case  "EVENEMENTS PAYANTS":
-			is_corporate.read_only = 1;
-			lieu.read_only = 0;
-			selling.read_only = 0;
-			tasting.read_only = 0;
-			sampling.read_only = 0;
-			visibility.read_only = 0;
-			frm.doc.logistic = 0;
-			logistic.read_only = 1;
-			break;
-		case  "EVENEMENTS GRATUITS":
-			is_corporate.read_only = 0;
-			lieu.read_only = 0;
-			selling.read_only = 1;
-			tasting.read_only = 0;
-			sampling.read_only = 0;
-			frm.doc.visibility = 0;
-			visibility.read_only = 1;
-			frm.doc.logistic = 0;
-			logistic.read_only = 1;
-			clear_vente(frm);
-			break;
-		default:
-			is_corporate.read_only = 0;
-			lieu.read_only = 0;
-			selling.read_only = 0;
-			tasting.read_only = 0;
-			sampling.read_only = 0;
-			frm.doc.selling = 1;
-			frm.doc.tasting = 1;
-			frm.doc.tasting = 1;
-			visibility.read_only = 0;
-			logistic.read_only = 0;
-	}
-	frm.refresh();
+
+const on_activite_change = (frm) =>{
+
+    var is_corporate = frappe.meta.get_docfield("Projet","is_corporate", cur_frm.doc.name);
+
+    var lieu = frappe.meta.get_docfield("Projet","lieu", cur_frm.doc.name);
+
+    var selling = frappe.meta.get_docfield("Projet","selling", cur_frm.doc.name);
+
+    var tasting = frappe.meta.get_docfield("Projet","tasting", cur_frm.doc.name);
+
+    var sampling = frappe.meta.get_docfield("Projet","sampling", cur_frm.doc.name);
+
+    var visibility = frappe.meta.get_docfield("Projet","visibility", cur_frm.doc.name);
+
+    var logistic = frappe.meta.get_docfield("Projet","logistic", cur_frm.doc.name);
+
+    //is_corporate.read_only = 1;
+
+    //is_corporate.reqd = 1;
+
+
+
+    switch (frm.doc.activite) {
+
+        case "DOOR TO DOOR":
+
+            is_corporate.read_only = 1;
+
+            lieu.read_only = 1;
+
+            selling.read_only = 1;
+
+            tasting.read_only = 1;
+
+            sampling.read_only = 1;
+
+            frm.doc.visibility = 0;
+
+            visibility.read_only = 1;
+
+            logistic.read_only = 0;
+
+            frm.doc.selling = 1;
+
+            clear_tasting(frm);
+
+            clear_sampling(frm);
+
+            break;
+
+        case "ECOLES":
+
+            is_corporate.read_only = 1;
+
+            lieu.read_only = 1;
+
+            selling.read_only = 0;
+
+            tasting.read_only = 0;
+
+            sampling.read_only = 0;
+
+            frm.doc.visibility = 0;
+
+            visibility.read_only = 1;
+
+            frm.doc.logistic = 0;
+
+            logistic.read_only = 1;
+
+            break;
+
+        case "PLACE PUBLIQUE":
+
+            is_corporate.read_only = 1;
+
+            lieu.read_only = 1;
+
+            selling.read_only = 0;
+
+            tasting.read_only = 0;
+
+            sampling.read_only = 0;
+
+            frm.doc.visibility = 0;
+
+            visibility.read_only = 1;
+
+            frm.doc.logistic = 0;
+
+            logistic.read_only = 1;
+
+            break;
+
+        case "MATERNITES":
+
+            is_corporate.read_only = 1;
+
+            lieu.read_only = 1;
+
+            selling.read_only = 0;
+
+            tasting.read_only = 1;
+
+            sampling.read_only = 1;
+
+            frm.doc.visibility = 0;
+
+            visibility.read_only = 1;
+
+            frm.doc.logistic = 0;
+
+            logistic.read_only = 1;
+
+            clear_tasting(frm);
+
+            clear_sampling(frm);
+
+            break;
+
+        case "SURVEY QUANTI":
+
+            is_corporate.read_only = 1;
+
+            lieu.read_only = 1;
+
+            selling.read_only = 1;
+
+            selling.read_only = 1;
+
+            tasting.read_only = 1;
+
+            sampling.read_only = 1;
+
+            frm.doc.visibility = 0;
+
+            visibility.read_only = 1;
+
+            frm.doc.logistic = 0;
+
+            logistic.read_only = 1;
+
+            clear_vente(frm);
+
+            clear_tasting(frm);
+
+            clear_sampling(frm);
+
+            break;
+
+        case "SURVEY QUALI":
+
+            is_corporate.read_only = 1;
+
+            lieu.read_only = 1;
+
+            selling.read_only = 1;
+
+            tasting.read_only = 1;
+
+            sampling.read_only = 1;
+
+            frm.doc.visibility = 0;
+
+            visibility.read_only = 1;
+
+            frm.doc.logistic = 0;
+
+            logistic.read_only = 1;
+
+            clear_vente(frm);
+
+            clear_tasting(frm);
+
+            clear_sampling(frm);
+
+            break;
+
+        case  "EVENEMENTS PAYANTS":
+
+            is_corporate.read_only = 1;
+
+            lieu.read_only = 0;
+
+            selling.read_only = 0;
+
+            tasting.read_only = 0;
+
+            sampling.read_only = 0;
+
+            visibility.read_only = 0;
+
+            frm.doc.logistic = 0;
+
+            logistic.read_only = 1;
+
+            break;
+
+        case  "EVENEMENTS GRATUITS":
+
+            is_corporate.read_only = 0;
+
+            lieu.read_only = 0;
+
+            selling.read_only = 1;
+
+            tasting.read_only = 0;
+
+            sampling.read_only = 0;
+
+            frm.doc.visibility = 0;
+
+            visibility.read_only = 1;
+
+            frm.doc.logistic = 0;
+
+            logistic.read_only = 1;
+
+            clear_vente(frm);
+
+            break;
+
+        default:
+
+            is_corporate.read_only = 0;
+
+            lieu.read_only = 0;
+
+            selling.read_only = 0;
+
+            tasting.read_only = 0;
+
+            sampling.read_only = 0;
+
+            frm.doc.selling = 1;
+
+            frm.doc.tasting = 1;
+
+            frm.doc.tasting = 1;
+
+            visibility.read_only = 0;
+
+            logistic.read_only = 0;
+
+    }
+
+    frm.refresh();
+
 }*/
 
+
+
 const clear_vente = (frm) =>{
-	frm.doc.selling = 0;
-	frm.doc.type_sale = "";
-	frm.doc.nombre_sale = 0;
-	frm.doc.objectif_jour_sale = 0;
-	frm.doc.transport_jour_sale = 0;
-	frm.doc.salaire_jour_sale = 0;
-	frm.doc.sellings = [];
-	frm.doc.sales_materials_details = [];
+
+    frm.doc.selling = 0;
+
+    frm.doc.type_sale = "";
+
+    frm.doc.nombre_sale = 0;
+
+    frm.doc.objectif_jour_sale = 0;
+
+    frm.doc.transport_jour_sale = 0;
+
+    frm.doc.salaire_jour_sale = 0;
+
+    frm.doc.sellings = [];
+
+    frm.doc.sales_materials_details = [];
+
 }
+
 const clear_tasting = (frm) =>{
-	frm.doc.tasting = 0;
-	frm.doc.type_tasting = "";
-	frm.doc.nombre_tasting = 0;
-	frm.doc.objectif_jour_tasting = 0;
-	frm.doc.transport_jour_tasting = 0;
-	frm.doc.salaire_jour_tasting = 0;
-	frm.doc.tastings = [];
-	frm.doc.tasting_material_details = [];
+
+    frm.doc.tasting = 0;
+
+    frm.doc.type_tasting = "";
+
+    frm.doc.nombre_tasting = 0;
+
+    frm.doc.objectif_jour_tasting = 0;
+
+    frm.doc.transport_jour_tasting = 0;
+
+    frm.doc.salaire_jour_tasting = 0;
+
+    frm.doc.tastings = [];
+
+    frm.doc.tasting_material_details = [];
+
 }
+
 const clear_sampling = (frm) =>{
-	frm.doc.sampling = 0;
-	frm.doc.type_sampling = "";
-	frm.doc.nombre_sampling = 0;
-	frm.doc.transport_jour_sampling = 0;
-	frm.doc.salaire_jour_sampling = 0;
-	frm.doc.samplings = [];
-	frm.doc.sampling_material_details = [];
+
+    frm.doc.sampling = 0;
+
+    frm.doc.type_sampling = "";
+
+    frm.doc.nombre_sampling = 0;
+
+    frm.doc.transport_jour_sampling = 0;
+
+    frm.doc.salaire_jour_sampling = 0;
+
+    frm.doc.samplings = [];
+
+    frm.doc.sampling_material_details = [];
+
 }
+
+
+
 
 
 frappe.ui.form.on('Sales Details', {
-	item(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		
-		if(row.item_group != "Package") {
-			if(frm.doc.branch == "Kinshasa"){
-				cur_frm.events.get_cm29_price(frm,row.item).then((result)=> row.prix_achat = result);
-				cur_frm.events.get_gross_selling_price(frm,row.item).then((result)=> row.cout = result);
-			}
-			else{
-				cur_frm.events.get_gross_selling_price(frm,row.item).then((result)=> {row.prix_achat = result; row.cout = result});
-			}
-			
-		}
-		else {
-			cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.prix_achat = result.prix_achat);
-			cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
-		}
-		frm.refresh_field("sellings");
-    },
-});
-frappe.ui.form.on('Sale Materials Details', {
+
     item(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_item_cost(frm,row.item).then((result)=> row.cout = result)
-		frm.refresh_field("sales_materials_details");
+
+        var row = locals[cdt][cdn]; 
+
+
+
+        if(row.item_group != "Package") {
+
+            if(frm.doc.branch == "Kinshasa"){
+
+                cur_frm.events.get_cm29_price(frm,row.item).then((result)=> row.prix_achat = result);
+
+                cur_frm.events.get_gross_selling_price(frm,row.item).then((result)=> row.cout = result);
+
+            }
+
+            else{
+
+                cur_frm.events.get_gross_selling_price(frm,row.item).then((result)=> {row.prix_achat = result; row.cout = result});
+
+            }
+
+
+
+        }
+
+        else {
+
+            cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.prix_achat = result.prix_achat);
+
+            cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
+
+        }
+
+        frm.refresh_field("sellings");
+
     },
-});
-/*frappe.ui.form.on('Logistic Details', {
-    item(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
-		frm.refresh_field("logistics");
-    },
-});*/
-frappe.ui.form.on('Tasting Details', {
-    item(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		if(row.item_group != "Package") cur_frm.events.get_gross_selling_price(frm,row.item).then((result)=> row.cout = result);
-		else cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
-		frm.refresh_field("tastings");
-    },
-});
-frappe.ui.form.on('Tasting Material Details', {
-    item(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_item_cost(frm,row.item).then((result)=> row.cout = result)
-		frm.refresh_field("tasting_material_details");
-    },
+
 });
 
+frappe.ui.form.on('Sale Materials Details', {
+
+    item(frm, cdt, cdn) {
+
+        var row = locals[cdt][cdn]; 
+
+        cur_frm.events.get_item_cost(frm,row.item).then((result)=> row.cout = result)
+
+        frm.refresh_field("sales_materials_details");
+
+    },
+
+});
+
+/*frappe.ui.form.on('Logistic Details', {
+
+    item(frm, cdt, cdn) {
+
+        var row = locals[cdt][cdn]; 
+
+        cur_frm.events.get_cost(frm,row.item).then((result)=> row.cout = result)
+
+        frm.refresh_field("logistics");
+
+    },
+
+});*/
+
+frappe.ui.form.on('Tasting Details', {
+
+    item(frm, cdt, cdn) {
+
+        var row = locals[cdt][cdn]; 
+
+        if(row.item_group != "Package") cur_frm.events.get_gross_selling_price(frm,row.item).then((result)=> row.cout = result);
+
+        else cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
+
+        frm.refresh_field("tastings");
+
+    },
+
+});
+
+frappe.ui.form.on('Tasting Material Details', {
+
+    item(frm, cdt, cdn) {
+
+        var row = locals[cdt][cdn]; 
+
+        cur_frm.events.get_item_cost(frm,row.item).then((result)=> row.cout = result)
+
+        frm.refresh_field("tasting_material_details");
+
+    },
+
+});
+
+
+
 frappe.ui.form.on('Sampling Details', {
+
     item(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		if(row.item_group != "Package") cur_frm.events.get_gross_selling_price(frm,row.item).then((result)=> row.cout = result);
-		else cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
-		frm.refresh_field("samplings");
+
+        var row = locals[cdt][cdn]; 
+
+        if(row.item_group != "Package") cur_frm.events.get_gross_selling_price(frm,row.item).then((result)=> row.cout = result);
+
+        else cur_frm.events.get_package_cost(frm,row.item).then((result)=> row.cout = result.cout);
+
+        frm.refresh_field("samplings");
+
     },
+
 });
+
 frappe.ui.form.on('Sampling Material Details', {
+
     item(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_item_cost(frm,row.item).then((result)=> row.cout = result)
-		frm.refresh_field("sampling_material_details");
+
+        var row = locals[cdt][cdn]; 
+
+        cur_frm.events.get_item_cost(frm,row.item).then((result)=> row.cout = result)
+
+        frm.refresh_field("sampling_material_details");
+
     },
+
 });
+
 frappe.ui.form.on('Visibility Details', {
+
     item(frm, cdt, cdn) {
-		var row = locals[cdt][cdn]; 
-		cur_frm.events.get_item_cost(frm,row.item).then((result)=> row.cout = result)
-		frm.refresh_field("visibilities");
+
+        var row = locals[cdt][cdn]; 
+
+        cur_frm.events.get_item_cost(frm,row.item).then((result)=> row.cout = result)
+
+        frm.refresh_field("visibilities");
+
     },
+
 });
