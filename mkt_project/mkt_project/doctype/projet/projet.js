@@ -729,56 +729,81 @@ function setup_budget_expense_action(frm) {
 
 	const grid = frm.fields_dict.details.grid;
 
-	setTimeout(() => {
+	// Pas d'ajout/suppression de lignes.
+	// Les checkboxes servent uniquement à sélectionner.
+	grid.cannot_add_rows = true;
+	grid.cannot_delete_rows = true;
+	grid.df.cannot_add_rows = true;
+	grid.df.cannot_delete_rows = true;
+
+	const btn = grid.add_custom_button(__("Dépenses"), () => {
+		const rows = grid.get_selected_children();
+
+		if (rows.length) {
+			create_marketing_bpm(frm, rows);
+		}
+	});
+
+	btn
+		.removeClass("btn-secondary")
+		.addClass("btn-primary")
+		.hide();
+
+
+	function refresh_selection() {
+
+		// Frappe désactive les checkbox d'une grille Read Only.
+		// On les réactive uniquement pour la sélection.
 		grid.toggle_checkboxes(true);
 
-		// Afficher le footer, mais masquer les actions standard
-		grid.wrapper.find(".grid-footer").removeClass("hidden").show();
+		const has_selection =
+			grid.get_selected_children().length > 0;
 
+		// Aucun bouton standard Delete
 		grid.wrapper
-			.find(
-				".grid-add-row, " +
-				".grid-add-multiple-rows, " +
-				".grid-remove-rows, " +
-				".grid-remove-all-rows"
-			)
+			.find(".grid-remove-rows, .grid-remove-all-rows")
 			.hide();
 
-		const btn = grid.add_custom_button(__("Dépenses"), () => {
-			const rows = grid.get_selected_children();
+		// Aucun bouton Add Row
+		grid.wrapper
+			.find(".grid-add-row, .grid-add-multiple-rows")
+			.hide();
 
-			if (rows.length) {
-				create_marketing_bpm(frm, rows);
-			}
+		// Footer seulement lorsqu'une ligne est sélectionnée
+		grid.wrapper
+			.find(".grid-footer")
+			.toggleClass("hidden", !has_selection);
+
+		btn.toggle(has_selection);
+	}
+
+
+	/*
+	 * Frappe déclenche "change" à la fin de grid.refresh().
+	 * On réactive donc les checkbox après chaque refresh.
+	 */
+	grid.wrapper
+		.off("change.bpm_budget_grid")
+		.on("change.bpm_budget_grid", () => {
+			setTimeout(refresh_selection, 0);
 		});
 
-		btn
-			.removeClass("btn-secondary")
-			.addClass("btn-primary");
 
-		function refresh_action() {
-			const has_selection =
-				grid.get_selected_children().length > 0;
+	/*
+	 * Mise à jour immédiate après sélection/désélection.
+	 */
+	grid.wrapper
+		.off("click.bpm_budget_select", ".grid-row-check")
+		.on(
+			"click.bpm_budget_select",
+			".grid-row-check",
+			() => {
+				setTimeout(refresh_selection, 0);
+			}
+		);
 
-			btn.toggle(has_selection);
 
-			// Frappe peut réafficher Delete après une sélection
-			grid.wrapper
-				.find(".grid-remove-rows, .grid-remove-all-rows")
-				.hide();
-		}
-
-		// État initial
-		refresh_action();
-
-		// Ligne individuelle ou Select All
-		grid.wrapper
-			.off("change.bpm_expense", ".grid-row-check")
-			.on("change.bpm_expense", ".grid-row-check", () => {
-				setTimeout(refresh_action, 0);
-			});
-
-	}, 0);
+	setTimeout(refresh_selection, 0);
 }
 
 frappe.ui.form.on("Projet", {
